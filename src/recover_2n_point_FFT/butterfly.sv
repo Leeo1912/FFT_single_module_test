@@ -32,7 +32,7 @@ logic signed [DATA_WIDTH - 1 : 0] xq_i_s;
 logic signed [TWID_WIDTH - 1 : 0] wn_r_s;
 logic signed [TWID_WIDTH - 1 : 0] wn_i_s;
 
-always_ff @( posedge clk,negedge rst_n ) begin
+always_comb begin
     if(!rst_n)begin
         xp_r_s <= 'b0;
         xp_i_s <= 'b0;

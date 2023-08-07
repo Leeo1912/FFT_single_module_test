@@ -34,15 +34,15 @@ module recover_2n_FFT #(
 
 );
 
-logic signed [DATA_WIDTH - 1 : 0] temp_x1_r_beat[7:0];
-logic signed [DATA_WIDTH - 1 : 0] temp_x1_i_beat[7:0];
-logic signed [DATA_WIDTH - 1 : 0] temp_x2_r_beat[7:0];
-logic signed [DATA_WIDTH - 1 : 0] temp_x2_i_beat[7:0];
+// logic signed [DATA_WIDTH - 1 : 0] temp_x1_r_beat[7:0];
+// logic signed [DATA_WIDTH - 1 : 0] temp_x1_i_beat[7:0];
+// logic signed [DATA_WIDTH - 1 : 0] temp_x2_r_beat[7:0];
+// logic signed [DATA_WIDTH - 1 : 0] temp_x2_i_beat[7:0];
 
-logic signed [DATA_WIDTH - 1 : 0] temp_e_r[7:0];
-logic signed [DATA_WIDTH - 1 : 0] temp_e_i[7:0];
-logic signed [DATA_WIDTH - 1 : 0] temp_o_r[7:0];
-logic signed [DATA_WIDTH - 1 : 0] temp_o_i[7:0];
+logic signed [DATA_WIDTH - 1 : 0] temp_x1_r[7:0];
+logic signed [DATA_WIDTH - 1 : 0] temp_x1_i[7:0];
+logic signed [DATA_WIDTH - 1 : 0] temp_x2_r[7:0];
+logic signed [DATA_WIDTH - 1 : 0] temp_x2_i[7:0];
 
 
 logic signed [TWID_WIDTH - 1 : 0] temp_wn_r[7:0];
@@ -78,87 +78,49 @@ rom_read_4_twiddle u_rom_read_4_twiddle(
 always_ff @( posedge clk , negedge rst_n ) begin 
     if(!rst_n)begin
         for (int i = 0;i < 8 ;i++ ) begin
-            temp_x1_r_beat[i] <= 'b0;
-            temp_x1_i_beat[i] <= 'b0;
-            temp_x2_r_beat[i] <= 'b0;
-            temp_x2_i_beat[i] <= 'b0;
+            temp_x1_r[i] <= 'b0;
+            temp_x1_i[i] <= 'b0;
+            temp_x2_r[i] <= 'b0;
+            temp_x2_i[i] <= 'b0;
         end
     end else begin
         for (int i = 0 ;i < 4;i++ ) begin
-            temp_x1_r_beat[i] <= x1_col1_r[i];
-            temp_x1_i_beat[i] <= x1_col1_i[i];
-            temp_x1_r_beat[i+4] <= x1_col2_r[i];
-            temp_x1_i_beat[i+4] <= x1_col2_i[i];
+            temp_x1_r[i] <= x1_col1_r[i];
+            temp_x1_i[i] <= x1_col1_i[i];
+            temp_x1_r[i+4] <= x1_col2_r[i];
+            temp_x1_i[i+4] <= x1_col2_i[i];
 
-            temp_x2_r_beat[i] <= x2_col1_r[i];
-            temp_x2_i_beat[i] <= x2_col1_i[i];
-            temp_x2_r_beat[i+4] <= x2_col2_r[i];
-            temp_x2_i_beat[i+4] <= x2_col2_i[i];
+            temp_x2_r[i] <= x2_col1_r[i];
+            temp_x2_i[i] <= x2_col1_i[i];
+            temp_x2_r[i+4] <= x2_col2_r[i];
+            temp_x2_i[i+4] <= x2_col2_i[i];
         end
     end
 end
 
-always_ff @( posedge clk , negedge rst_n ) begin 
+ always_comb begin 
     if(!rst_n)begin
         for (int i = 0;i < 8 ;i++ ) begin
-            temp_e_r[i] <= 'b0;
-            temp_e_i[i] <= 'b0;
-            temp_o_r[i] <= 'b0;
-            temp_o_i[i] <= 'b0;
-
-            temp_wn_r[i] <= 'b0;
-            temp_wn_i[i] <= 'b0;
+            temp_wn_r[i] = 'b0;
+            temp_wn_i[i] = 'b0;
         end
     end else begin
-            temp_e_r[0] <= temp_x1_r_beat[0];
-            temp_e_i[0] <= temp_x1_i_beat[0];
-            temp_o_r[0] <= temp_x2_r_beat[0];
-            temp_o_i[0] <= temp_x2_i_beat[0];
-            temp_e_r[1] <= temp_x1_r_beat[1];
-            temp_e_i[1] <= temp_x1_i_beat[1];
-            temp_o_r[1] <= temp_x2_r_beat[1];
-            temp_o_i[1] <= temp_x2_i_beat[1];
-            temp_e_r[2] <= temp_x1_r_beat[2];
-            temp_e_i[2] <= temp_x1_i_beat[2];
-            temp_o_r[2] <= temp_x2_r_beat[2];
-            temp_o_i[2] <= temp_x2_i_beat[2];
-            temp_e_r[3] <= temp_x1_r_beat[3];
-            temp_e_i[3] <= temp_x1_i_beat[3];
-            temp_o_r[3] <= temp_x2_r_beat[3];
-            temp_o_i[3] <= temp_x2_i_beat[3];
-            temp_e_r[4] <= temp_x1_r_beat[4];
-            temp_e_i[4] <= temp_x1_i_beat[4];
-            temp_o_r[4] <= temp_x2_r_beat[4];
-            temp_o_i[4] <= temp_x2_i_beat[4];
-            temp_e_r[5] <= temp_x1_r_beat[5];
-            temp_e_i[5] <= temp_x1_i_beat[5];
-            temp_o_r[5] <= temp_x2_r_beat[5];
-            temp_o_i[5] <= temp_x2_i_beat[5];
-            temp_e_r[6] <= temp_x1_r_beat[6];
-            temp_e_i[6] <= temp_x1_i_beat[6];
-            temp_o_r[6] <= temp_x2_r_beat[6];
-            temp_o_i[6] <= temp_x2_i_beat[6];
-            temp_e_r[7] <= temp_x1_r_beat[7];
-            temp_e_i[7] <= temp_x1_i_beat[7];
-            temp_o_r[7] <= temp_x2_r_beat[7];
-            temp_o_i[7] <= temp_x2_i_beat[7];
-
-            temp_wn_r[0] <= twiddle_col1[0][63:32];
-            temp_wn_i[0] <= twiddle_col1[0][31:0 ];
-            temp_wn_r[1] <= twiddle_col1[1][63:32];
-            temp_wn_i[1] <= twiddle_col1[1][31:0 ];
-            temp_wn_r[2] <= twiddle_col1[2][63:32];
-            temp_wn_i[2] <= twiddle_col1[2][31:0 ];
-            temp_wn_r[3] <= twiddle_col1[3][63:32];
-            temp_wn_i[3] <= twiddle_col1[3][31:0 ];
-            temp_wn_r[4] <= twiddle_col2[0][63:32];
-            temp_wn_i[4] <= twiddle_col2[0][31:0 ];
-            temp_wn_r[5] <= twiddle_col2[1][63:32];
-            temp_wn_i[5] <= twiddle_col2[1][31:0 ];
-            temp_wn_r[6] <= twiddle_col2[2][63:32];
-            temp_wn_i[6] <= twiddle_col2[2][31:0 ];
-            temp_wn_r[7] <= twiddle_col2[3][63:32];
-            temp_wn_i[7] <= twiddle_col2[3][31:0 ];
+            temp_wn_r[0] = twiddle_col1[0][63:32];
+            temp_wn_i[0] = twiddle_col1[0][31:0 ];
+            temp_wn_r[1] = twiddle_col1[1][63:32];
+            temp_wn_i[1] = twiddle_col1[1][31:0 ];
+            temp_wn_r[2] = twiddle_col1[2][63:32];
+            temp_wn_i[2] = twiddle_col1[2][31:0 ];
+            temp_wn_r[3] = twiddle_col1[3][63:32];
+            temp_wn_i[3] = twiddle_col1[3][31:0 ];
+            temp_wn_r[4] = twiddle_col2[0][63:32];
+            temp_wn_i[4] = twiddle_col2[0][31:0 ];
+            temp_wn_r[5] = twiddle_col2[1][63:32];
+            temp_wn_i[5] = twiddle_col2[1][31:0 ];
+            temp_wn_r[6] = twiddle_col2[2][63:32];
+            temp_wn_i[6] = twiddle_col2[2][31:0 ];
+            temp_wn_r[7] = twiddle_col2[3][63:32];
+            temp_wn_i[7] = twiddle_col2[3][31:0 ];
     end 
 end
 
@@ -174,10 +136,10 @@ generate
             u_butterfly(
             	.clk   (clk            ),
                 .rst_n (rst_n          ),
-                .xp_r  (temp_e_r[i]    ),
-                .xp_i  (temp_e_i[i]    ),
-                .xq_r  (temp_o_r[i]    ),
-                .xq_i  (temp_o_i[i]    ),
+                .xp_r  (temp_x1_r[i]    ),
+                .xp_i  (temp_x1_i[i]    ),
+                .xq_r  (temp_x2_r[i]    ),
+                .xq_i  (temp_x2_i[i]    ),
                 
                 .wn_r  (temp_wn_r[i]    ),
                 .wn_i  (temp_wn_i[i]    ),
@@ -287,8 +249,6 @@ logic valid1;
 logic valid2;
 logic valid3;
 logic valid4;
-logic valid5;
-logic valid6;
 
 always_ff @( posedge clk , negedge rst_n ) begin 
     if (!rst_n) begin
@@ -298,10 +258,8 @@ always_ff @( posedge clk , negedge rst_n ) begin
         valid2 <= 'b0;
         valid3 <= 'b0;
         valid4 <= 'b0;
-        valid5 <= 'b0;
-        valid6 <= 'b0;
     end else begin
-        {ready,valid0,valid1,valid2,valid3,valid4,valid5,valid6} <= {valid0,valid1,valid2,valid3,valid4,valid5,valid6,valid};
+        {ready,valid0,valid1,valid2,valid3,valid4} <= {valid0,valid1,valid2,valid3,valid4,valid};
     end
 end
 //output index_col_1 & index_col_2
@@ -310,16 +268,14 @@ logic [10:0] index_col1_1;
 logic [10:0] index_col1_2;
 logic [10:0] index_col1_3;
 logic [10:0] index_col1_4;
-logic [10:0] index_col1_5;
-logic [10:0] index_col1_6;
+
 
 logic [10:0] index_col2_0;
 logic [10:0] index_col2_1;
 logic [10:0] index_col2_2;
 logic [10:0] index_col2_3;
 logic [10:0] index_col2_4;
-logic [10:0] index_col2_5;
-logic [10:0] index_col2_6;
+
 
 always_ff @( posedge clk , negedge rst_n ) begin 
     if (!rst_n) begin
@@ -328,18 +284,17 @@ always_ff @( posedge clk , negedge rst_n ) begin
         index_col1_2 <= 'b0;
         index_col1_3 <= 'b0;
         index_col1_4 <= 'b0;
-        index_col1_5 <= 'b0;
-        index_col1_6 <= 'b0;
+
+
         index_col2_0 <= 'b0;
         index_col2_1 <= 'b0;
         index_col2_2 <= 'b0;
         index_col2_3 <= 'b0;
         index_col2_4 <= 'b0;
-        index_col2_5 <= 'b0;
-        index_col2_6 <= 'b0;
+
     end else begin
-        {output_index_col1,index_col1_0,index_col1_1,index_col1_2,index_col1_3,index_col1_4,index_col1_5,index_col1_6} <= {index_col1_0,index_col1_1,index_col1_2,index_col1_3,index_col1_4,index_col1_5,index_col1_6,index_col_1};
-        {output_index_col2,index_col2_0,index_col2_1,index_col2_2,index_col2_3,index_col2_4,index_col2_5,index_col2_6} <= {index_col2_0,index_col2_1,index_col2_2,index_col2_3,index_col2_4,index_col2_5,index_col2_6,index_col_2};
+        {output_index_col1,index_col1_0,index_col1_1,index_col1_2,index_col1_3,index_col1_4} <= {index_col1_0,index_col1_1,index_col1_2,index_col1_3,index_col1_4,index_col_1};
+        {output_index_col2,index_col2_0,index_col2_1,index_col2_2,index_col2_3,index_col2_4} <= {index_col2_0,index_col2_1,index_col2_2,index_col2_3,index_col2_4,index_col_2};
     end
 end
 

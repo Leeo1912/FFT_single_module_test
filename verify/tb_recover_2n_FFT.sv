@@ -33,6 +33,9 @@ parameter SHIFT = 15;
     logic [3:0][DATA_WIDTH - 1:0] x2_col2_i;
     logic [10:0]index_col_2;
 
+    logic [10:0] output_index_col1;
+    logic [10:0] output_index_col2;
+
     logic [63:0] rom_1[8191:0];
     logic [63:0] rom_2[8191:0]; 
     logic [63:0] golden_rom[8191:0];
@@ -248,6 +251,7 @@ initial begin
 end
 
 
+
 recover_2n_FFT 
 #(
     .DATA_WIDTH (DATA_WIDTH ),
@@ -275,8 +279,12 @@ u_recover_2n_FFT(
 
     .dataout_col1_r (dataout_col1_r ),
     .dataout_col1_i (dataout_col1_i ),
+    .output_index_col1 (output_index_col1 ),
+
     .dataout_col2_r (dataout_col2_r ),
-    .dataout_col2_i (dataout_col2_i )
+    .dataout_col2_i (dataout_col2_i ),
+    .output_index_col2 (output_index_col2 )
+
 );
 
     
