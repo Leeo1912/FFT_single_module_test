@@ -140,7 +140,6 @@ always_comb begin
         twi_i_s[2][2] = twiddle[2][95 :64];
         twi_r_s[2][3] = twiddle[2][63 :32];
         twi_i_s[2][3] = twiddle[2][31 : 0];
-
     end
 end
 
@@ -345,20 +344,20 @@ logic [10:0] index_0;
 logic [10:0] index_1;
 logic [10:0] index_2;
 logic [10:0] index_3;
-logic [10:0] index_4;
-logic [10:0] index_5;
+// logic [10:0] index_4;
+// logic [10:0] index_5;
 always_ff @( posedge clk,negedge rst_n ) begin
     if (!rst_n) begin
         index_0 <= 'b0;
         index_1 <= 'b0;
         index_2 <= 'b0;
         index_3 <= 'b0;
-        index_4 <= 'b0;
-        index_5 <= 'b0;
+        // index_4 <= 'b0;
+        // index_5 <= 'b0;
     end else if ((ready == 0) && (valid == 0)) begin
         index <= 'b0;
     end else begin
-        {index,index_0,index_1,index_2,index_3,index_4,index_5} <= {index_0,index_1,index_2,index_3,index_4,index_5,lable};
+        {index,index_0,index_1,index_2,index_3} <= {index_0,index_1,index_2,index_3,lable};
     end
 end
 
@@ -371,8 +370,8 @@ logic valid0;
 logic valid1;
 logic valid2;
 logic valid3;
-logic valid4;
-logic valid5;
+// logic valid4;
+// logic valid5;
 
 always_ff @( posedge clk , negedge rst_n ) begin 
     if (!rst_n) begin
@@ -381,11 +380,11 @@ always_ff @( posedge clk , negedge rst_n ) begin
         valid1 <= 'b0;
         valid2 <= 'b0;
         valid3 <= 'b0;
-        valid4 <= 'b0;
-        valid5 <= 'b0;
+        // valid4 <= 'b0;
+        // valid5 <= 'b0;
 
     end else begin
-        {ready,valid0,valid1,valid2,valid3,valid4,valid5} <= {valid0,valid1,valid2,valid3,valid4,valid5,valid};
+        {ready,valid0,valid1,valid2,valid3} <= {valid0,valid1,valid2,valid3,valid};
     end
 end
 endmodule

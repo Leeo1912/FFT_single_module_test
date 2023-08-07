@@ -1,5 +1,4 @@
-
-//3 clk;
+// 2 clk;
 module complex_mul #(
     parameter DATA_WIDTH = 21,
     parameter TWID_WIDTH = 16,
@@ -22,8 +21,6 @@ module complex_mul #(
 
 logic signed [DATA_WIDTH - 1 : 0] a_r_s;
 logic signed [DATA_WIDTH - 1 : 0] a_i_s;
-logic signed [DATA_WIDTH - 1 : 0] a_r_s_reg;
-logic signed [DATA_WIDTH - 1 : 0] a_i_s_reg;
 
 logic signed [TWID_WIDTH - 1 : 0] b_r_s;
 logic signed [TWID_WIDTH - 1 : 0] b_i_s;
@@ -36,25 +33,15 @@ logic signed [DATA_WIDTH + TWID_WIDTH - 1 : 0] temp_ai_br;
 logic signed [DATA_WIDTH + TWID_WIDTH : 0] c_i_s;
 logic signed [DATA_WIDTH + TWID_WIDTH : 0] c_r_s;
 
-always_ff @( posedge clk,negedge rst_n ) begin
-    if(!rst_n)begin
-        a_r_s_reg <= 'b0;
-        a_i_s_reg <= 'b0;
-    end else begin
-        a_r_s_reg <= a_r;
-        a_i_s_reg <= a_i;
-    end
-end
-
-always_ff @( posedge clk,negedge rst_n ) begin
+always_comb begin
     if(!rst_n)begin
         a_r_s <= 'b0;
         a_i_s <= 'b0;
         b_r_s <= 'b0;
         b_i_s <= 'b0;
     end else begin
-        a_r_s <= a_r_s_reg;
-        a_i_s <= a_i_s_reg;
+        a_r_s <= a_r;
+        a_i_s <= a_i;
         b_r_s <= b_r;
         b_i_s <= b_i;
     end

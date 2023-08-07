@@ -18,10 +18,7 @@ module X0_shift #(
     logic signed [DATA_WIDTH + TWID_WIDTH : 0] a_r_shift;
     logic signed [DATA_WIDTH + TWID_WIDTH : 0] a_i_shift;
 
-    logic signed [DATA_WIDTH + TWID_WIDTH : 0] a_r_shift_s;
-    logic signed [DATA_WIDTH + TWID_WIDTH : 0] a_i_shift_s;
-
-    always_ff @( posedge clk,negedge rst_n ) begin 
+    always_comb begin 
         if(!rst_n)begin
             a_r_s <= 'b0;
             a_i_s <= 'b0;
@@ -43,21 +40,11 @@ module X0_shift #(
 
     always_ff @( posedge clk,negedge rst_n ) begin 
         if(!rst_n)begin
-            a_r_shift_s <= 'b0;
-            a_i_shift_s <= 'b0;
-        end else begin
-            a_r_shift_s <= a_r_shift;
-            a_i_shift_s <= a_i_shift;
-        end
-    end
-
-    always_ff @( posedge clk,negedge rst_n ) begin 
-        if(!rst_n)begin
             b_r <= 'b0;
             b_i <= 'b0;
         end else begin
-            b_r <= a_r_shift_s;
-            b_i <= a_i_shift_s;
+            b_r <= a_r_shift;
+            b_i <= a_i_shift;
         end
     end
 endmodule

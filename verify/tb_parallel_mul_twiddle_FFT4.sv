@@ -103,7 +103,7 @@ initial begin
             result[i] <= 0;
         end 
 
-    #70;
+    #50;
 
         for (int i = 0;i < 8192 ;i=i+4 ) begin
             @(posedge clk)
@@ -148,6 +148,7 @@ initial begin
             $display("err_0 is %d", cnt_err);                    
         end
         $display("simulation finish!");
+        #(100*clk_period);
         $finish;
 
     $display("compare end!");
