@@ -34,21 +34,21 @@ logic signed [TWID_WIDTH - 1 : 0] wn_i_s;
 
 always_comb begin
     if(!rst_n)begin
-        xp_r_s <= 'b0;
-        xp_i_s <= 'b0;
-        xq_r_s <= 'b0;
-        xq_i_s <= 'b0;
+        xp_r_s = 'b0;
+        xp_i_s = 'b0;
+        xq_r_s = 'b0;
+        xq_i_s = 'b0;
 
-        wn_r_s <= 'b0;
-        wn_i_s <= 'b0;
+        wn_r_s = 'b0;
+        wn_i_s = 'b0;
     end else begin
-        xp_r_s <= xp_r;
-        xp_i_s <= xp_i;
-        xq_r_s <= xq_r;
-        xq_i_s <= xq_i;
+        xp_r_s = xp_r;
+        xp_i_s = xp_i;
+        xq_r_s = xq_r;
+        xq_i_s = xq_i;
 
-        wn_r_s <= wn_r;
-        wn_i_s <= wn_i;
+        wn_r_s = wn_r;
+        wn_i_s = wn_i;
     end
 end
 
