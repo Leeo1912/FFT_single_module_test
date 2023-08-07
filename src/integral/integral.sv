@@ -35,32 +35,32 @@ module intergral #(
     always_comb begin
         if(!rst_n)begin
             for (int i = 0;i < 4 ;i++ ) begin
-                col1_r_s[i] <= 'b0;
-                col1_i_s[i] <= 'b0;
-                col2_r_s[i] <= 'b0;
-                col2_i_s[i] <= 'b0;
+                col1_r_s[i] = 'b0;
+                col1_i_s[i] = 'b0;
+                col2_r_s[i] = 'b0;
+                col2_i_s[i] = 'b0;
             end
         end else if(valid == 1) begin
             if (index_col_1 == 'd0 || index_col_1 =='d1) begin
                 for (int i = 0;i < 4 ;i++ ) begin
-                    col1_r_s[i] <= col1_r[i];
-                    col1_i_s[i] <= col1_i[i];
-                    col2_r_s[i] <= 'b0;
-                    col2_i_s[i] <= 'b0;
+                    col1_r_s[i] = col1_r[i];
+                    col1_i_s[i] = col1_i[i];
+                    col2_r_s[i] = 'b0;
+                    col2_i_s[i] = 'b0;
             end
             end else
                 for (int i = 0;i < 4 ;i++ ) begin
-                    col1_r_s[i] <= col1_r[i];
-                    col1_i_s[i] <= col1_i[i];
-                    col2_r_s[i] <= col2_r[i];
-                    col2_i_s[i] <= col2_i[i];
+                    col1_r_s[i] = col1_r[i];
+                    col1_i_s[i] = col1_i[i];
+                    col2_r_s[i] = col2_r[i];
+                    col2_i_s[i] = col2_i[i];
                 end
         end else begin
             for (int i = 0;i < 4 ;i++ ) begin
-                col1_r_s[i] <= 'b0;
-                col1_i_s[i] <= 'b0;
-                col2_r_s[i] <= 'b0;
-                col2_i_s[i] <= 'b0;
+                col1_r_s[i] = 'b0;
+                col1_i_s[i] = 'b0;
+                col2_r_s[i] = 'b0;
+                col2_i_s[i] = 'b0;
             end
         end
     end
