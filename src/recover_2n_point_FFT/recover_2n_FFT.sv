@@ -68,8 +68,8 @@ rom_read_4_twiddle u_rom_read_4_twiddle(
     .clk         (clk         ),
     .rst_n       (rst_n       ),
     .valid       (valid       ),
-    .addr_col1   (reverse_1 ),
-    .addr_col2   (reverse_2 ),
+    .addr_col1   (reverse_1   ),
+    .addr_col2   (reverse_2   ),
     .data_o_col1 (twiddle_col1),
     .data_o_col2 (twiddle_col2)
 );
