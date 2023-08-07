@@ -9,7 +9,7 @@ echo [pwd]
 
 
 #/* specify the libaraies */
-set search_path "/mnt/HD0-v1/TSMC28HPC+/TSMCHOME/digital/Front_End/timing_power_noise/CCS/tcbn28hpcplusbwp12t30p140_180a ./ ./src"
+set search_path "/mnt/HD0-v1/TSMC28HPC+/TSMCHOME/digital/Front_End/timing_power_noise/CCS/tcbn28hpcplusbwp12t30p140_180a ./ ./src" 
 set target_library "tcbn28hpcplusbwp12t30p140ssg0p81vm40c_ccs.db"
 set link_library "* dw_foundation.sldb tcbn28hpcplusbwp12t30p140ssg0p81vm40c_ccs.db"
 set synthetic_library "dw_foundation.sldb"
@@ -26,11 +26,11 @@ link
 
 # define the design environment
 report_design
-set_operating_conditions -max ssg0p81vm40c
+set_operating_conditions -max ssg0p81vm40c 
 #set_operating_conditions ssg0p9v0c -lib tcbn28hpcplusbwp12t30p140ssg0p9v0c_ccs
 
 # set design constraints
-set_units -time ns -capacitance pF -current mA -voltage V
+set_units -time ns -capacitance pF -current mA -voltage V 
 create_clock -name rclk -period 2.5 [get_ports "clk"]
 
 set_clock_uncertainty -setup 0 [all_clocks]
@@ -38,13 +38,13 @@ set_clock_uncertainty -hold 0  [all_clocks]
 set_clock_transition 0.053     [all_clocks]
 
 set_input_transition -max 0.03 [all_inputs]
-set_input_transition -max 0.01 [get_ports "clk"]
+set_input_transition -max 0.01 [get_ports "clk"] 
 set_input_transition -min 0.001 [all_inputs]
 
 set_max_transition 0.11 [current_design]
 set_max_transition 0.055 -clock [all_clocks]
 
-set_input_delay -clock rclk -min 0  [remove_from_collection [all_inputs] "clk"]
+set_input_delay -clock rclk -min 0  [remove_from_collection [all_inputs] "clk"] 
 set_output_delay -clock rclk -min 0 [all_outputs]
 
 set_input_delay -max 1.25 -clock rclk [remove_from_collection [all_inputs] "clk"]
@@ -69,7 +69,7 @@ uniquify
 compile -map_effort high
 compile -only_design_rule -incremental_mapping
 compile -ungroup_all
-
+compile_ultra
 ####################################################
 ##change name
 #####################################################
