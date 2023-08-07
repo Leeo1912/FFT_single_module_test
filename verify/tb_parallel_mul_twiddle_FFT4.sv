@@ -6,8 +6,8 @@ parameter MSB_CUTOFF = 26;   // [DATA_WIDTH + TWID_WIDTH + 1 - LSB_CUTOFF : 0] t
 parameter LSB_CUTOFF = 12;   // [DATA_WIDTH + TWID_WIDTH +1 : 0] temp_add_r_res[3:0];
 parameter SHIFT = 15;
 
-localparam FILE_NAME = "D:/data_software/github_desktop/FFT-s900/src/recover_2n_point_FFT/testcase8003/dit4/serial2048_golden64.txt";
-localparam GOLDEN = "D:/data_software/github_desktop/FFT-s900/src/recover_2n_point_FFT/testcase8003/dit4/cfft8192_golden64.txt";
+localparam FILE_NAME = "D:/data_software/github_desktop/FFT_single_module_test/verify/case/testcase8003/dit4/serial2048_golden64.txt";
+localparam GOLDEN = "D:/data_software/github_desktop/FFT_single_module_test/verify/case/testcase8003/dit4/cfft8192_golden64.txt";
 
 localparam clk_period = 10;
 logic clk;

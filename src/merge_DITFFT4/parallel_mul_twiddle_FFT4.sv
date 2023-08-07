@@ -61,81 +61,85 @@ rom_twiddle u_rom_twiddle(
     .data_o (twiddle)
 );
 
-always_ff @( posedge clk,negedge rst_n ) begin
+always_ff @( posedge clk,negedge rst_n ) begin  
+   if (!rst_n) begin
+        x_r_s[0] <= 'b0;
+        x_i_s[0] <= 'b0;
+        x_r_s[1] <= 'b0;
+        x_i_s[1] <= 'b0;
+        x_r_s[2] <= 'b0;
+        x_i_s[2] <= 'b0;
+        x_r_s[3] <= 'b0;
+        x_i_s[3] <= 'b0;
+   end else begin
+        x_r_s[0] <= x0_r;
+        x_i_s[0] <= x0_i;
+        x_r_s[1] <= x1_r;
+        x_i_s[1] <= x1_i;
+        x_r_s[2] <= x2_r;
+        x_i_s[2] <= x2_i;
+        x_r_s[3] <= x3_r;
+        x_i_s[3] <= x3_i;
+   end
+end
+
+
+always_comb begin
     if(!rst_n)begin
-        twi_r_s[0][0] <= 'b0;
-        twi_i_s[0][0] <= 'b0;
-        twi_r_s[0][1] <= 'b0;
-        twi_i_s[0][1] <= 'b0;
-        twi_r_s[0][2] <= 'b0;
-        twi_i_s[0][2] <= 'b0;
-        twi_r_s[0][3] <= 'b0;
-        twi_i_s[0][3] <= 'b0;
+        twi_r_s[0][0] = 'b0;
+        twi_i_s[0][0] = 'b0;
+        twi_r_s[0][1] = 'b0;
+        twi_i_s[0][1] = 'b0;
+        twi_r_s[0][2] = 'b0;
+        twi_i_s[0][2] = 'b0;
+        twi_r_s[0][3] = 'b0;
+        twi_i_s[0][3] = 'b0;
 
-        twi_r_s[1][0] <= 'b0;
-        twi_i_s[1][0] <= 'b0;
-        twi_r_s[1][1] <= 'b0;
-        twi_i_s[1][1] <= 'b0;
-        twi_r_s[1][2] <= 'b0;
-        twi_i_s[1][2] <= 'b0;
-        twi_r_s[1][3] <= 'b0;
-        twi_i_s[1][3] <= 'b0;
+        twi_r_s[1][0] = 'b0;
+        twi_i_s[1][0] = 'b0;
+        twi_r_s[1][1] = 'b0;
+        twi_i_s[1][1] = 'b0;
+        twi_r_s[1][2] = 'b0;
+        twi_i_s[1][2] = 'b0;
+        twi_r_s[1][3] = 'b0;
+        twi_i_s[1][3] = 'b0;
 
-        twi_r_s[2][0] <= 'b0;
-        twi_i_s[2][0] <= 'b0;
-        twi_r_s[2][1] <= 'b0;
-        twi_i_s[2][1] <= 'b0;
-        twi_r_s[2][2] <= 'b0;
-        twi_i_s[2][2] <= 'b0;
-        twi_r_s[2][3] <= 'b0;
-        twi_i_s[2][3] <= 'b0;
-
-        x_r_s[0] <= 'b0; 
-        x_i_s[0] <= 'b0; 
-        x_r_s[1] <= 'b0; 
-        x_i_s[1] <= 'b0; 
-        x_r_s[2] <= 'b0; 
-        x_i_s[2] <= 'b0; 
-        x_r_s[3] <= 'b0; 
-        x_i_s[3] <= 'b0; 
-
+        twi_r_s[2][0] = 'b0;
+        twi_i_s[2][0] = 'b0;
+        twi_r_s[2][1] = 'b0;
+        twi_i_s[2][1] = 'b0;
+        twi_r_s[2][2] = 'b0;
+        twi_i_s[2][2] = 'b0;
+        twi_r_s[2][3] = 'b0;
+        twi_i_s[2][3] = 'b0;
 
     end else begin
-        twi_r_s[0][0] <= twiddle[0][255:224];
-        twi_i_s[0][0] <= twiddle[0][223:192];
-        twi_r_s[0][1] <= twiddle[0][191:160];
-        twi_i_s[0][1] <= twiddle[0][159:128];
-        twi_r_s[0][2] <= twiddle[0][127:96];
-        twi_i_s[0][2] <= twiddle[0][95 :64];
-        twi_r_s[0][3] <= twiddle[0][63 :32];
-        twi_i_s[0][3] <= twiddle[0][31 : 0];
+        twi_r_s[0][0] = twiddle[0][255:224];
+        twi_i_s[0][0] = twiddle[0][223:192];
+        twi_r_s[0][1] = twiddle[0][191:160];
+        twi_i_s[0][1] = twiddle[0][159:128];
+        twi_r_s[0][2] = twiddle[0][127:96];
+        twi_i_s[0][2] = twiddle[0][95 :64];
+        twi_r_s[0][3] = twiddle[0][63 :32];
+        twi_i_s[0][3] = twiddle[0][31 : 0];
 
-        twi_r_s[1][0] <= twiddle[1][255:224];
-        twi_i_s[1][0] <= twiddle[1][223:192];
-        twi_r_s[1][1] <= twiddle[1][191:160];
-        twi_i_s[1][1] <= twiddle[1][159:128];
-        twi_r_s[1][2] <= twiddle[1][127:96];
-        twi_i_s[1][2] <= twiddle[1][95 :64];
-        twi_r_s[1][3] <= twiddle[1][63 :32];
-        twi_i_s[1][3] <= twiddle[1][31 : 0];
+        twi_r_s[1][0] = twiddle[1][255:224];
+        twi_i_s[1][0] = twiddle[1][223:192];
+        twi_r_s[1][1] = twiddle[1][191:160];
+        twi_i_s[1][1] = twiddle[1][159:128];
+        twi_r_s[1][2] = twiddle[1][127:96];
+        twi_i_s[1][2] = twiddle[1][95 :64];
+        twi_r_s[1][3] = twiddle[1][63 :32];
+        twi_i_s[1][3] = twiddle[1][31 : 0];
 
-        twi_r_s[2][0] <= twiddle[2][255:224];
-        twi_i_s[2][0] <= twiddle[2][223:192];
-        twi_r_s[2][1] <= twiddle[2][191:160];
-        twi_i_s[2][1] <= twiddle[2][159:128];
-        twi_r_s[2][2] <= twiddle[2][127:96];
-        twi_i_s[2][2] <= twiddle[2][95 :64];
-        twi_r_s[2][3] <= twiddle[2][63 :32];
-        twi_i_s[2][3] <= twiddle[2][31 : 0];
-
-        x_r_s[0] <= x0_r; 
-        x_i_s[0] <= x0_i; 
-        x_r_s[1] <= x1_r; 
-        x_i_s[1] <= x1_i; 
-        x_r_s[2] <= x2_r; 
-        x_i_s[2] <= x2_i; 
-        x_r_s[3] <= x3_r; 
-        x_i_s[3] <= x3_i;  
+        twi_r_s[2][0] = twiddle[2][255:224];
+        twi_i_s[2][0] = twiddle[2][223:192];
+        twi_r_s[2][1] = twiddle[2][191:160];
+        twi_i_s[2][1] = twiddle[2][159:128];
+        twi_r_s[2][2] = twiddle[2][127:96];
+        twi_i_s[2][2] = twiddle[2][95 :64];
+        twi_r_s[2][3] = twiddle[2][63 :32];
+        twi_i_s[2][3] = twiddle[2][31 : 0];
 
     end
 end
