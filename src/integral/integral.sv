@@ -29,8 +29,6 @@ module intergral #(
     logic signed [IN_DATA_WIDTH - 1 : 0] col1_i_s[3:0];
     logic signed [IN_DATA_WIDTH - 1 : 0] col2_r_s[3:0];
     logic signed [IN_DATA_WIDTH - 1 : 0] col2_i_s[3:0];
-    logic signed [OUT_DATA_WIDTH - 1 : 0] col_1_s[3:0];
-    logic signed [OUT_DATA_WIDTH - 1 : 0] col_2_s[3:0];
 
     always_comb begin
         if(!rst_n)begin
@@ -89,8 +87,8 @@ module intergral #(
     end
 
 //add
-    logic signed [IN_DATA_WIDTH * 2 : 0] add_square_col1[3:0];
-    logic signed [IN_DATA_WIDTH * 2 : 0] add_square_col2[3:0];
+    logic [IN_DATA_WIDTH * 2 : 0] add_square_col1[3:0];
+    logic [IN_DATA_WIDTH * 2 : 0] add_square_col2[3:0];
 
     always_ff @( posedge clk,negedge rst_n ) begin
         if (!rst_n) begin
@@ -107,8 +105,8 @@ module intergral #(
     end
 
 //rounding
-logic signed [IN_DATA_WIDTH * 2 - LSB_CUTOFF : 0] temp_cut_tail_col1[3:0];
-logic signed [IN_DATA_WIDTH * 2 - LSB_CUTOFF : 0] temp_cut_tail_col2[3:0];
+logic [IN_DATA_WIDTH * 2 - LSB_CUTOFF : 0] temp_cut_tail_col1[3:0];
+logic [IN_DATA_WIDTH * 2 - LSB_CUTOFF : 0] temp_cut_tail_col2[3:0];
 
     always_comb begin : CUT_tail_add_square_col1
         for (int n = 0;n < 4 ;n++ ) begin
@@ -149,25 +147,25 @@ logic signed [IN_DATA_WIDTH * 2 - LSB_CUTOFF : 0] temp_cut_tail_col2[3:0];
     end
   
 //clamp
-logic signed [OUT_DATA_WIDTH - 1 : 0] res_col1_cut[3:0];
-logic signed [OUT_DATA_WIDTH - 1 : 0] res_col2_cut[3:0];
+logic [OUT_DATA_WIDTH - 1 : 0] res_col1_cut[3:0];
+logic [OUT_DATA_WIDTH - 1 : 0] res_col2_cut[3:0];
 
     always_comb begin : CUT_head_add_square_col1
         for (int n = 0;n < 4 ;n++ ) begin
-            if (|temp_cut_tail_col1[n][(IN_DATA_WIDTH * 2 - LSB_CUTOFF):(MSB_CUTOFF)] == 1) begin
-                res_col1_cut[n] = {1'b0,{(IN_DATA_WIDTH-1){1'b1}}};
+            if (|temp_cut_tail_col1[n][(IN_DATA_WIDTH * 2 - LSB_CUTOFF):(MSB_CUTOFF+1)] == 1) begin
+                res_col1_cut[n] = {OUT_DATA_WIDTH{1'b1}};
             end else begin
-                res_col1_cut[n] = {temp_cut_tail_col1[n][IN_DATA_WIDTH * 2 - LSB_CUTOFF],temp_cut_tail_col1[n][MSB_CUTOFF - 1:0]};
+                res_col1_cut[n] = {temp_cut_tail_col1[n][MSB_CUTOFF : 0]};
             end
         end
     end 
     
     always_comb begin : CUT_head_add_square_col2
         for (int n = 0;n < 4 ;n++ ) begin
-            if (|temp_cut_tail_col2[n][(IN_DATA_WIDTH * 2 - LSB_CUTOFF):(MSB_CUTOFF)] == 1) begin
-                res_col2_cut[n] = {1'b0,{(IN_DATA_WIDTH-1){1'b1}}};
+            if (|temp_cut_tail_col2[n][(IN_DATA_WIDTH * 2 - LSB_CUTOFF):(MSB_CUTOFF+1)] == 1) begin
+                res_col2_cut[n] = {OUT_DATA_WIDTH{1'b1}};
             end else begin
-                res_col2_cut[n] = {temp_cut_tail_col2[n][IN_DATA_WIDTH * 2 - LSB_CUTOFF],temp_cut_tail_col2[n][MSB_CUTOFF - 1:0]};
+                res_col2_cut[n] = {temp_cut_tail_col2[n][MSB_CUTOFF : 0]};
             end
         end
     end
