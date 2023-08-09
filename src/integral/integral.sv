@@ -4,7 +4,7 @@ module intergral #(
     parameter OUT_DATA_WIDTH = 52,
     //Truncate at bit MSB_CUTOFF
     parameter LSB_CUTOFF = 11,                   // rounding basing add_square_col1
-    parameter MSB_CUTOFF = 52                   // clamp(after rounding) basing temp_cut_tail_col1
+    parameter MSB_CUTOFF = 51                   // clamp(after rounding) basing temp_cut_tail_col1
 ) (
     input logic clk,
     input logic rst_n,
