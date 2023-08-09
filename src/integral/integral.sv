@@ -1,9 +1,9 @@
 //4clk
 module intergral #(
     parameter IN_DATA_WIDTH = 32,
-    parameter OUT_DATA_WIDTH = 53,
+    parameter OUT_DATA_WIDTH = 52,
     //Truncate at bit MSB_CUTOFF
-    parameter LSB_CUTOFF = 10,                   // rounding basing add_square_col1
+    parameter LSB_CUTOFF = 11,                   // rounding basing add_square_col1
     parameter MSB_CUTOFF = 52                   // clamp(after rounding) basing temp_cut_tail_col1
 ) (
     input logic clk,
