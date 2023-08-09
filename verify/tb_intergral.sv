@@ -2,13 +2,13 @@
 module tb_intergral ();
     
     parameter IN_DATA_WIDTH = 32;
-    parameter OUT_DATA_WIDTH = 53;
+    parameter OUT_DATA_WIDTH = 52;
     //Truncate at bit MSB_CUTOFF
-    parameter LSB_CUTOFF = 10;                   // rounding basing add_square_col1
-    parameter MSB_CUTOFF = 52;                   // clamp(after rounding) basing temp_cut_tail_col1
+    parameter LSB_CUTOFF = 11;                   // rounding basing add_square_col1
+    parameter MSB_CUTOFF = 51;                   // clamp(after rounding) basing temp_cut_tail_col1
 
-    localparam FILE_NAME_x1 = "D:/data_software/github_desktop/FFT_single_module_test/verify/case/case_8005_4/decode_s2/rfft16384_decode_golden.txt";
-    localparam GOLDEN = "D:/data_software/github_desktop/FFT_single_module_test/verify/case/case_8005_4/decode_s2/rfft16384_power_golden.txt";
+    localparam FILE_NAME_x1 = "D:/data_software/github_desktop/FFT_single_module_test/verify/case/case_8010/case_8010_9/decode_s2/rfft16384_decode_golden.txt";
+    localparam GOLDEN = "D:/data_software/github_desktop/FFT_single_module_test/verify/case/case_8010/case_8010_9/decode_s2/rfft16384_power_golden.txt";
 
     // localparam INDEX_COL_1 = "D:/data_software/github_desktop/FFT-s900/src/recover_2n_point_FFT/index_col1.txt";
     // localparam INDEX_COL_2 = "D:/data_software/github_desktop/FFT-s900/src/recover_2n_point_FFT/index_col2.txt";
@@ -29,7 +29,7 @@ module tb_intergral ();
     logic [3:0][OUT_DATA_WIDTH - 1:0] col_2;
 
     logic [63:0] rom[8191:0];
-    logic [52:0] golden_rom[8191:0];
+    logic [OUT_DATA_WIDTH - 1:0] golden_rom[8191:0];
          
     logic [63:0] input_x[8191:0];
 
@@ -108,10 +108,10 @@ initial begin
 end
 
 //compare output with golden
-logic [52:0] result [8191:0];
+logic [OUT_DATA_WIDTH - 1:0] result [8191:0];
 
-logic signed [52:0] col1_s[3:0];
-logic signed [52:0] col2_s[3:0];
+logic signed [OUT_DATA_WIDTH - 1:0] col1_s[3:0];
+logic signed [OUT_DATA_WIDTH - 1:0] col2_s[3:0];
 
 
 initial begin 
@@ -182,6 +182,7 @@ initial begin
         $finish;
 
     $display("compare end!");
+    #100;
 end
 
 
