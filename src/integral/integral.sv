@@ -30,35 +30,35 @@ module intergral #(
     logic signed [IN_DATA_WIDTH - 1 : 0] col2_r_s[3:0];
     logic signed [IN_DATA_WIDTH - 1 : 0] col2_i_s[3:0];
 
-    always_comb begin
+    always_ff @( posedge clk,negedge rst_n ) begin
         if(!rst_n)begin
             for (int i = 0;i < 4 ;i++ ) begin
-                col1_r_s[i] = 'b0;
-                col1_i_s[i] = 'b0;
-                col2_r_s[i] = 'b0;
-                col2_i_s[i] = 'b0;
+                col1_r_s[i] <= 'b0;
+                col1_i_s[i] <= 'b0;
+                col2_r_s[i] <= 'b0;
+                col2_i_s[i] <= 'b0;
             end
         end else if(valid == 1) begin
             if (index_col_1 == 'd0 || index_col_1 =='d1) begin
                 for (int i = 0;i < 4 ;i++ ) begin
-                    col1_r_s[i] = col1_r[i];
-                    col1_i_s[i] = col1_i[i];
-                    col2_r_s[i] = 'b0;
-                    col2_i_s[i] = 'b0;
+                    col1_r_s[i] <= col1_r[i];
+                    col1_i_s[i] <= col1_i[i];
+                    col2_r_s[i] <= 'b0;
+                    col2_i_s[i] <= 'b0;
             end
             end else
                 for (int i = 0;i < 4 ;i++ ) begin
-                    col1_r_s[i] = col1_r[i];
-                    col1_i_s[i] = col1_i[i];
-                    col2_r_s[i] = col2_r[i];
-                    col2_i_s[i] = col2_i[i];
+                    col1_r_s[i] <= col1_r[i];
+                    col1_i_s[i] <= col1_i[i];
+                    col2_r_s[i] <= col2_r[i];
+                    col2_i_s[i] <= col2_i[i];
                 end
         end else begin
             for (int i = 0;i < 4 ;i++ ) begin
-                col1_r_s[i] = 'b0;
-                col1_i_s[i] = 'b0;
-                col2_r_s[i] = 'b0;
-                col2_i_s[i] = 'b0;
+                col1_r_s[i] <= 'b0;
+                col1_i_s[i] <= 'b0;
+                col2_r_s[i] <= 'b0;
+                col2_i_s[i] <= 'b0;
             end
         end
     end
@@ -188,38 +188,44 @@ end
 //input&output flag
 logic valid0;
 logic valid1;
+logic valid2;
 
 always_ff @( posedge clk , negedge rst_n ) begin 
     if (!rst_n) begin
         ready <= 'd0;
         valid0 <= 'b0;
         valid1 <= 'b0;
+        valid2 <= 'b0;
 
     end else begin
-        {ready,valid0,valid1} <= {valid0,valid1,valid};
+        {ready,valid0,valid1,valid2} <= {valid0,valid1,valid2,valid};
     end
 end
 
 //output index_col_1&index_col_2
 logic [10:0] index_col1_0;
 logic [10:0] index_col1_1;
+logic [10:0] index_col1_2;
 
 logic [10:0] index_col2_0;
 logic [10:0] index_col2_1;
+logic [10:0] index_col2_2;
 
 always_ff @( posedge clk , negedge rst_n ) begin 
     if (!rst_n) begin
         index_col1_0 <= 'b0;
         index_col1_1 <= 'b0;
+        index_col1_2 <= 'b0;
         out_index_col1 <= 'b0;
 
         index_col2_0 <= 'b0;
         index_col2_1 <= 'b0;
+        index_col2_2 <= 'b0;
         out_index_col2 <= 'b0;
     
     end else begin
-        {out_index_col1,index_col1_0,index_col1_1} <= {index_col1_0,index_col1_1,index_col_1};
-        {out_index_col2,index_col2_0,index_col2_1} <= {index_col2_0,index_col2_1,index_col_2};
+        {out_index_col1,index_col1_0,index_col1_1,index_col1_2} <= {index_col1_0,index_col1_1,index_col1_2,index_col_1};
+        {out_index_col2,index_col2_0,index_col2_1,index_col2_2} <= {index_col2_0,index_col2_1,index_col2_2,index_col_2};
     end
 end
 

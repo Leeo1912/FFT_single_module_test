@@ -7,8 +7,8 @@ module tb_intergral ();
     parameter LSB_CUTOFF = 10;                   // rounding basing add_square_col1
     parameter MSB_CUTOFF = 52;                   // clamp(after rounding) basing temp_cut_tail_col1
 
-    localparam FILE_NAME_x1 = "D:/data_software/github_desktop/FFT_single_module_test/verify/case/case_8005_5/decode_s2/rfft16384_decode_golden.txt";
-    localparam GOLDEN = "D:/data_software/github_desktop/FFT_single_module_test/verify/case/case_8005_5/decode_s2/rfft16384_power_golden.txt";
+    localparam FILE_NAME_x1 = "D:/data_software/github_desktop/FFT_single_module_test/verify/case/case_8005_4/decode_s2/rfft16384_decode_golden.txt";
+    localparam GOLDEN = "D:/data_software/github_desktop/FFT_single_module_test/verify/case/case_8005_4/decode_s2/rfft16384_power_golden.txt";
 
     // localparam INDEX_COL_1 = "D:/data_software/github_desktop/FFT-s900/src/recover_2n_point_FFT/index_col1.txt";
     // localparam INDEX_COL_2 = "D:/data_software/github_desktop/FFT-s900/src/recover_2n_point_FFT/index_col2.txt";
