@@ -103,7 +103,7 @@ initial begin
             result[i] <= 0;
         end 
 
-    #50;
+    #60;
 
         for (int i = 0;i < 8192 ;i=i+4 ) begin
             @(posedge clk)

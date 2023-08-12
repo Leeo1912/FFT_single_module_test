@@ -64,17 +64,70 @@ always_comb begin
     reverse_2 = {index_col_2[0],index_col_2[1],index_col_2[2],index_col_2[3],index_col_2[4],index_col_2[5],index_col_2[6],index_col_2[7],index_col_2[8],index_col_2[9],index_col_2[10]};
 end
 
+logic [10:0] reverse_1_reg;
+logic [10:0] reverse_2_reg;
+logic valid_reg;
+
+always_ff @( posedge clk,negedge rst_n ) begin
+    if (!rst_n) begin
+        reverse_1_reg <= 0;
+        reverse_2_reg <= 0;
+        valid_reg <= 0;
+    end else begin
+        reverse_1_reg <= reverse_1;
+        reverse_2_reg <= reverse_2;
+        valid_reg <= valid;
+    end
+end
+
 rom_read_4_twiddle u_rom_read_4_twiddle(
-    .clk         (clk         ),
-    .rst_n       (rst_n       ),
-    .valid       (valid       ),
-    .addr_col1   (reverse_1   ),
-    .addr_col2   (reverse_2   ),
-    .data_o_col1 (twiddle_col1),
-    .data_o_col2 (twiddle_col2)
+    .clk         (clk             ),
+    .rst_n       (rst_n           ),
+    .valid       (valid_reg       ),
+    .addr_col1   (reverse_1_reg   ),
+    .addr_col2   (reverse_2_reg   ),
+    .data_o_col1 (twiddle_col1    ),
+    .data_o_col2 (twiddle_col2    )
 );
 
-//Take a beat of the input data, synchronized with the twiddle factor
+//Take two beats of the input data, synchronized with the twiddle factor
+logic [3:0][DATA_WIDTH - 1:0] x1_col1_r_temp;
+logic [3:0][DATA_WIDTH - 1:0] x1_col1_i_temp;
+logic [3:0][DATA_WIDTH - 1:0] x2_col1_r_temp;
+logic [3:0][DATA_WIDTH - 1:0] x2_col1_i_temp;
+logic [3:0][DATA_WIDTH - 1:0] x1_col2_r_temp;
+logic [3:0][DATA_WIDTH - 1:0] x1_col2_i_temp;
+logic [3:0][DATA_WIDTH - 1:0] x2_col2_r_temp;
+logic [3:0][DATA_WIDTH - 1:0] x2_col2_i_temp;
+
+always_ff @( posedge clk , negedge rst_n ) begin 
+    if(!rst_n)begin
+        for (int i = 0;i < 8 ;i++ ) begin
+            x1_col1_r_temp[i] <= 'b0;
+            x1_col1_i_temp[i] <= 'b0;
+            x2_col1_r_temp[i] <= 'b0;
+            x2_col1_i_temp[i] <= 'b0;
+
+            x1_col2_r_temp[i] <= 'b0;
+            x1_col2_i_temp[i] <= 'b0;
+            x2_col2_r_temp[i] <= 'b0;
+            x2_col2_i_temp[i] <= 'b0;
+        end
+    end else begin
+        for (int i = 0 ;i < 4;i++ ) begin
+            x1_col1_r_temp[i] <= x1_col1_r[i];
+            x1_col1_i_temp[i] <= x1_col1_i[i];
+            x1_col2_r_temp[i] <= x1_col2_r[i];
+            x1_col2_i_temp[i] <= x1_col2_i[i];
+
+            x2_col1_r_temp[i] <= x2_col1_r[i];
+            x2_col1_i_temp[i] <= x2_col1_i[i];
+            x2_col2_r_temp[i] <= x2_col2_r[i];
+            x2_col2_i_temp[i] <= x2_col2_i[i];
+        end
+    end
+end
+
 always_ff @( posedge clk , negedge rst_n ) begin 
     if(!rst_n)begin
         for (int i = 0;i < 8 ;i++ ) begin
@@ -85,15 +138,15 @@ always_ff @( posedge clk , negedge rst_n ) begin
         end
     end else begin
         for (int i = 0 ;i < 4;i++ ) begin
-            temp_x1_r[i] <= x1_col1_r[i];
-            temp_x1_i[i] <= x1_col1_i[i];
-            temp_x1_r[i+4] <= x1_col2_r[i];
-            temp_x1_i[i+4] <= x1_col2_i[i];
+            temp_x1_r[i+0] <= x1_col1_r_temp[i];
+            temp_x1_i[i+0] <= x1_col1_i_temp[i];
+            temp_x1_r[i+4] <= x1_col2_r_temp[i];
+            temp_x1_i[i+4] <= x1_col2_i_temp[i];
 
-            temp_x2_r[i] <= x2_col1_r[i];
-            temp_x2_i[i] <= x2_col1_i[i];
-            temp_x2_r[i+4] <= x2_col2_r[i];
-            temp_x2_i[i+4] <= x2_col2_i[i];
+            temp_x2_r[i+0] <= x2_col1_r_temp[i];
+            temp_x2_i[i+0] <= x2_col1_i_temp[i];
+            temp_x2_r[i+4] <= x2_col2_r_temp[i];
+            temp_x2_i[i+4] <= x2_col2_i_temp[i];
         end
     end
 end
@@ -249,6 +302,7 @@ logic valid1;
 logic valid2;
 logic valid3;
 logic valid4;
+logic valid5;
 
 always_ff @( posedge clk , negedge rst_n ) begin 
     if (!rst_n) begin
@@ -258,8 +312,9 @@ always_ff @( posedge clk , negedge rst_n ) begin
         valid2 <= 'b0;
         valid3 <= 'b0;
         valid4 <= 'b0;
+        valid5 <= 'b0;
     end else begin
-        {ready,valid0,valid1,valid2,valid3,valid4} <= {valid0,valid1,valid2,valid3,valid4,valid};
+        {ready,valid0,valid1,valid2,valid3,valid4,valid5} <= {valid0,valid1,valid2,valid3,valid4,valid5,valid};
     end
 end
 //output index_col_1 & index_col_2
@@ -268,6 +323,7 @@ logic [10:0] index_col1_1;
 logic [10:0] index_col1_2;
 logic [10:0] index_col1_3;
 logic [10:0] index_col1_4;
+logic [10:0] index_col1_5;
 
 
 logic [10:0] index_col2_0;
@@ -275,6 +331,7 @@ logic [10:0] index_col2_1;
 logic [10:0] index_col2_2;
 logic [10:0] index_col2_3;
 logic [10:0] index_col2_4;
+logic [10:0] index_col2_5;
 
 
 always_ff @( posedge clk , negedge rst_n ) begin 
@@ -284,6 +341,7 @@ always_ff @( posedge clk , negedge rst_n ) begin
         index_col1_2 <= 'b0;
         index_col1_3 <= 'b0;
         index_col1_4 <= 'b0;
+        index_col1_5 <= 'b0;
 
 
         index_col2_0 <= 'b0;
@@ -291,10 +349,10 @@ always_ff @( posedge clk , negedge rst_n ) begin
         index_col2_2 <= 'b0;
         index_col2_3 <= 'b0;
         index_col2_4 <= 'b0;
-
+        index_col2_5 <= 'b0;
     end else begin
-        {output_index_col1,index_col1_0,index_col1_1,index_col1_2,index_col1_3,index_col1_4} <= {index_col1_0,index_col1_1,index_col1_2,index_col1_3,index_col1_4,index_col_1};
-        {output_index_col2,index_col2_0,index_col2_1,index_col2_2,index_col2_3,index_col2_4} <= {index_col2_0,index_col2_1,index_col2_2,index_col2_3,index_col2_4,index_col_2};
+        {output_index_col1,index_col1_0,index_col1_1,index_col1_2,index_col1_3,index_col1_4,index_col1_5} <= {index_col1_0,index_col1_1,index_col1_2,index_col1_3,index_col1_4,index_col1_5,index_col_1};
+        {output_index_col2,index_col2_0,index_col2_1,index_col2_2,index_col2_3,index_col2_4,index_col2_5} <= {index_col2_0,index_col2_1,index_col2_2,index_col2_3,index_col2_4,index_col2_5,index_col_2};
     end
 end
 

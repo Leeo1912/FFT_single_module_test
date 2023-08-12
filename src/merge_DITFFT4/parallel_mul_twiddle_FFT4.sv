@@ -40,6 +40,10 @@ logic [255:0] twiddle[2:0];
 
 logic signed [DATA_WIDTH-1:0] x_r_s[3:0];
 logic signed [DATA_WIDTH-1:0] x_i_s[3:0];
+
+logic signed [DATA_WIDTH-1:0] x_r_s_reg[3:0];
+logic signed [DATA_WIDTH-1:0] x_i_s_reg[3:0];
+
 logic signed [TWID_WIDTH-1:0] twi_r_s[2:0][3:0];
 logic signed [TWID_WIDTH-1:0] twi_i_s[2:0][3:0];
 
@@ -53,13 +57,47 @@ logic signed [26 : 0] res_r_cut[3:0];
 logic signed [26 : 0] res_i_cut[3:0];
 
 //first clk
+logic [10:0] lable_reg;
+logic valid_reg;
+always_ff @( posedge clk,negedge rst_n ) begin
+    if (!rst_n) begin
+        lable_reg <= 0;
+        valid_reg <= 0;
+    end else begin
+        lable_reg <= lable;
+        valid_reg <= valid;
+    end
+end
+
 rom_twiddle u_rom_twiddle(
-    .clk    (clk    ),
-    .rst_n  (rst_n  ),
-    .valid  (valid  ),
-    .addr_i (lable  ),
-    .data_o (twiddle)
+    .clk    (clk        ),
+    .rst_n  (rst_n      ),
+    .valid  (valid_reg      ),
+    .addr_i (lable_reg  ),
+    .data_o (twiddle    )
 );
+
+always_ff @( posedge clk,negedge rst_n ) begin  
+   if (!rst_n) begin
+        x_r_s_reg[0] <= 'b0;
+        x_i_s_reg[0] <= 'b0;
+        x_r_s_reg[1] <= 'b0;
+        x_i_s_reg[1] <= 'b0;
+        x_r_s_reg[2] <= 'b0;
+        x_i_s_reg[2] <= 'b0;
+        x_r_s_reg[3] <= 'b0;
+        x_i_s_reg[3] <= 'b0;
+   end else begin
+        x_r_s_reg[0] <= x0_r;
+        x_i_s_reg[0] <= x0_i;
+        x_r_s_reg[1] <= x1_r;
+        x_i_s_reg[1] <= x1_i;
+        x_r_s_reg[2] <= x2_r;
+        x_i_s_reg[2] <= x2_i;
+        x_r_s_reg[3] <= x3_r;
+        x_i_s_reg[3] <= x3_i;
+   end
+end
 
 always_ff @( posedge clk,negedge rst_n ) begin  
    if (!rst_n) begin
@@ -72,17 +110,16 @@ always_ff @( posedge clk,negedge rst_n ) begin
         x_r_s[3] <= 'b0;
         x_i_s[3] <= 'b0;
    end else begin
-        x_r_s[0] <= x0_r;
-        x_i_s[0] <= x0_i;
-        x_r_s[1] <= x1_r;
-        x_i_s[1] <= x1_i;
-        x_r_s[2] <= x2_r;
-        x_i_s[2] <= x2_i;
-        x_r_s[3] <= x3_r;
-        x_i_s[3] <= x3_i;
+        x_r_s[0] <= x_r_s_reg[0];
+        x_i_s[0] <= x_i_s_reg[0];
+        x_r_s[1] <= x_r_s_reg[1];
+        x_i_s[1] <= x_i_s_reg[1];
+        x_r_s[2] <= x_r_s_reg[2];
+        x_i_s[2] <= x_i_s_reg[2];
+        x_r_s[3] <= x_r_s_reg[3];
+        x_i_s[3] <= x_i_s_reg[3];
    end
 end
-
 
 always_comb begin
     if(!rst_n)begin
@@ -344,7 +381,7 @@ logic [10:0] index_0;
 logic [10:0] index_1;
 logic [10:0] index_2;
 logic [10:0] index_3;
-// logic [10:0] index_4;
+logic [10:0] index_4;
 // logic [10:0] index_5;
 always_ff @( posedge clk,negedge rst_n ) begin
     if (!rst_n) begin
@@ -352,12 +389,12 @@ always_ff @( posedge clk,negedge rst_n ) begin
         index_1 <= 'b0;
         index_2 <= 'b0;
         index_3 <= 'b0;
-        // index_4 <= 'b0;
+        index_4 <= 'b0;
         // index_5 <= 'b0;
     end else if ((ready == 0) && (valid == 0)) begin
         index <= 'b0;
     end else begin
-        {index,index_0,index_1,index_2,index_3} <= {index_0,index_1,index_2,index_3,lable};
+        {index,index_0,index_1,index_2,index_3,index_4} <= {index_0,index_1,index_2,index_3,index_4,lable};
     end
 end
 
@@ -370,7 +407,7 @@ logic valid0;
 logic valid1;
 logic valid2;
 logic valid3;
-// logic valid4;
+logic valid4;
 // logic valid5;
 
 always_ff @( posedge clk , negedge rst_n ) begin 
@@ -380,11 +417,11 @@ always_ff @( posedge clk , negedge rst_n ) begin
         valid1 <= 'b0;
         valid2 <= 'b0;
         valid3 <= 'b0;
-        // valid4 <= 'b0;
+        valid4 <= 'b0;
         // valid5 <= 'b0;
 
     end else begin
-        {ready,valid0,valid1,valid2,valid3} <= {valid0,valid1,valid2,valid3,valid};
+        {ready,valid0,valid1,valid2,valid3,valid4} <= {valid0,valid1,valid2,valid3,valid4,valid};
     end
 end
 endmodule

@@ -20,11 +20,11 @@ module X0_shift #(
 
     always_comb begin 
         if(!rst_n)begin
-            a_r_s <= 'b0;
-            a_i_s <= 'b0;
+            a_r_s = 'b0;
+            a_i_s = 'b0;
         end else begin
-            a_r_s <= a_r;
-            a_i_s <= a_i;
+            a_r_s = a_r;
+            a_i_s = a_i;
         end
     end
 
