@@ -1,4 +1,4 @@
-`timescale 1ns/1ps
+// `timescale 1ns/1ps
 module rom_1
 (
     input  logic                     clk,

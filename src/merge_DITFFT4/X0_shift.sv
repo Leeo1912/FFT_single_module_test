@@ -19,13 +19,10 @@ module X0_shift #(
     logic signed [DATA_WIDTH + TWID_WIDTH : 0] a_i_shift;
 
     always_comb begin 
-        if(!rst_n)begin
-            a_r_s = 'b0;
-            a_i_s = 'b0;
-        end else begin
+
             a_r_s = a_r;
             a_i_s = a_i;
-        end
+
     end
 
     always_ff @( posedge clk,negedge rst_n ) begin 

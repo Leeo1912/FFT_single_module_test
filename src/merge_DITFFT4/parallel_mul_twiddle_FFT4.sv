@@ -122,35 +122,6 @@ always_ff @( posedge clk,negedge rst_n ) begin
 end
 
 always_comb begin
-    if(!rst_n)begin
-        twi_r_s[0][0] = 'b0;
-        twi_i_s[0][0] = 'b0;
-        twi_r_s[0][1] = 'b0;
-        twi_i_s[0][1] = 'b0;
-        twi_r_s[0][2] = 'b0;
-        twi_i_s[0][2] = 'b0;
-        twi_r_s[0][3] = 'b0;
-        twi_i_s[0][3] = 'b0;
-
-        twi_r_s[1][0] = 'b0;
-        twi_i_s[1][0] = 'b0;
-        twi_r_s[1][1] = 'b0;
-        twi_i_s[1][1] = 'b0;
-        twi_r_s[1][2] = 'b0;
-        twi_i_s[1][2] = 'b0;
-        twi_r_s[1][3] = 'b0;
-        twi_i_s[1][3] = 'b0;
-
-        twi_r_s[2][0] = 'b0;
-        twi_i_s[2][0] = 'b0;
-        twi_r_s[2][1] = 'b0;
-        twi_i_s[2][1] = 'b0;
-        twi_r_s[2][2] = 'b0;
-        twi_i_s[2][2] = 'b0;
-        twi_r_s[2][3] = 'b0;
-        twi_i_s[2][3] = 'b0;
-
-    end else begin
         twi_r_s[0][0] = twiddle[0][255:224];
         twi_i_s[0][0] = twiddle[0][223:192];
         twi_r_s[0][1] = twiddle[0][191:160];
@@ -177,7 +148,6 @@ always_comb begin
         twi_i_s[2][2] = twiddle[2][95 :64];
         twi_r_s[2][3] = twiddle[2][63 :32];
         twi_i_s[2][3] = twiddle[2][31 : 0];
-    end
 end
 
 //x0  +  x1*rom1[lable]  +  x2*rom2[lable]  +  x2*rom2[lable] = X(output)

@@ -33,15 +33,6 @@ logic signed [TWID_WIDTH - 1 : 0] wn_r_s;
 logic signed [TWID_WIDTH - 1 : 0] wn_i_s;
 
 always_comb begin
-    if(!rst_n)begin
-        xp_r_s = 'b0;
-        xp_i_s = 'b0;
-        xq_r_s = 'b0;
-        xq_i_s = 'b0;
-
-        wn_r_s = 'b0;
-        wn_i_s = 'b0;
-    end else begin
         xp_r_s = xp_r;
         xp_i_s = xp_i;
         xq_r_s = xq_r;
@@ -49,7 +40,6 @@ always_comb begin
 
         wn_r_s = wn_r;
         wn_i_s = wn_i;
-    end
 end
 
 logic signed [DATA_WIDTH + TWID_WIDTH - 2 : 0] temp_ac;

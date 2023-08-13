@@ -1,4 +1,4 @@
-`timescale 1ns/1ps
+// `timescale 1ns/1ps
 module rom_1_rfft_data64
 (
     input  logic                     clk,

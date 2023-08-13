@@ -102,7 +102,7 @@ logic [3:0][DATA_WIDTH - 1:0] x2_col2_i_temp;
 
 always_ff @( posedge clk , negedge rst_n ) begin 
     if(!rst_n)begin
-        for (int i = 0;i < 8 ;i++ ) begin
+        for (int i = 0;i < 4 ;i++ ) begin
             x1_col1_r_temp[i] <= 'b0;
             x1_col1_i_temp[i] <= 'b0;
             x2_col1_r_temp[i] <= 'b0;
@@ -152,12 +152,6 @@ always_ff @( posedge clk , negedge rst_n ) begin
 end
 
  always_comb begin 
-    if(!rst_n)begin
-        for (int i = 0;i < 8 ;i++ ) begin
-            temp_wn_r[i] = 'b0;
-            temp_wn_i[i] = 'b0;
-        end
-    end else begin
             temp_wn_r[0] = twiddle_col1[0][63:32];
             temp_wn_i[0] = twiddle_col1[0][31:0 ];
             temp_wn_r[1] = twiddle_col1[1][63:32];
@@ -174,7 +168,6 @@ end
             temp_wn_i[6] = twiddle_col2[2][31:0 ];
             temp_wn_r[7] = twiddle_col2[3][63:32];
             temp_wn_i[7] = twiddle_col2[3][31:0 ];
-    end 
 end
 
 generate

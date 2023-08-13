@@ -34,17 +34,10 @@ logic signed [DATA_WIDTH + TWID_WIDTH : 0] c_i_s;
 logic signed [DATA_WIDTH + TWID_WIDTH : 0] c_r_s;
 
 always_comb begin
-    if(!rst_n)begin
-        a_r_s = 'b0;
-        a_i_s = 'b0;
-        b_r_s = 'b0;
-        b_i_s = 'b0;
-    end else begin
         a_r_s = a_r;
         a_i_s = a_i;
         b_r_s = b_r;
         b_i_s = b_i;
-    end
 end
 
 always_ff @( posedge clk,negedge rst_n ) begin

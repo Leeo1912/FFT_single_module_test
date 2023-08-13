@@ -6,9 +6,9 @@ parameter TWID_WIDTH = 16;
 parameter LSB_CUTOFF = 12;   // [DATA_WIDTH + TWID_WIDTH +1 : 0] temp_add_r_res[3:0];
 parameter SHIFT = 15;
 
-    localparam FILE_NAME_x1 = "D:/data_software/github_desktop/FFT_single_module_test/verify/case/case_8010/case_8010_0/decode_s2/cfft8192_decode_x1_golden.txt";
-    localparam FILE_NAME_x2 = "D:/data_software/github_desktop/FFT_single_module_test/verify/case/case_8010/case_8010_0/decode_s2/cfft8192_decode_x2_golden.txt";
-    localparam DECODE_GOLDEN = "D:/data_software/github_desktop/FFT_single_module_test/verify/case/case_8010/case_8010_0/decode_s2/rfft16384_decode_golden.txt";
+    localparam FILE_NAME_x1 = "D:/data_software/github_desktop/FFT_single_module_test/verify/case/case_8010/case_8010_1/decode_s2/cfft8192_decode_x1_golden.txt";
+    localparam FILE_NAME_x2 = "D:/data_software/github_desktop/FFT_single_module_test/verify/case/case_8010/case_8010_1/decode_s2/cfft8192_decode_x2_golden.txt";
+    localparam DECODE_GOLDEN = "D:/data_software/github_desktop/FFT_single_module_test/verify/case/case_8010/case_8010_1/decode_s2/rfft16384_decode_golden.txt";
 
     localparam INDEX_COL1 = "D:/data_software/github_desktop/FFT_single_module_test/verify/case/case_8010/case_8010_0/decode_s2/index_col1.txt";
     localparam INDEX_COL2 = "D:/data_software/github_desktop/FFT_single_module_test/verify/case/case_8010/case_8010_0/decode_s2/index_col2.txt";
