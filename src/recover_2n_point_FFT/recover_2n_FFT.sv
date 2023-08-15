@@ -329,6 +329,7 @@ logic [10:0] index_col2_5;
 
 always_ff @( posedge clk , negedge rst_n ) begin 
     if (!rst_n) begin
+        output_index_col1 <= 'b0;
         index_col1_0 <= 'b0;
         index_col1_1 <= 'b0;
         index_col1_2 <= 'b0;
@@ -336,7 +337,7 @@ always_ff @( posedge clk , negedge rst_n ) begin
         index_col1_4 <= 'b0;
         index_col1_5 <= 'b0;
 
-
+        output_index_col2 <= 'b0;
         index_col2_0 <= 'b0;
         index_col2_1 <= 'b0;
         index_col2_2 <= 'b0;

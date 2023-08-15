@@ -355,6 +355,7 @@ logic [10:0] index_4;
 // logic [10:0] index_5;
 always_ff @( posedge clk,negedge rst_n ) begin
     if (!rst_n) begin
+        index <= 'b0;
         index_0 <= 'b0;
         index_1 <= 'b0;
         index_2 <= 'b0;
