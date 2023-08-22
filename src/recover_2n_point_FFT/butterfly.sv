@@ -14,10 +14,10 @@ module butterfly #(
     input logic [TWID_WIDTH - 1 : 0] wn_r,
     input logic [TWID_WIDTH - 1 : 0] wn_i,
 
-    output logic [DATA_WIDTH + TWID_WIDTH : 0] yp_r,
-    output logic [DATA_WIDTH + TWID_WIDTH : 0] yp_i,
-    output logic [DATA_WIDTH + TWID_WIDTH : 0] yq_r,
-    output logic [DATA_WIDTH + TWID_WIDTH : 0] yq_i
+    output logic [DATA_WIDTH + TWID_WIDTH + 1 : 0] yp_r,
+    output logic [DATA_WIDTH + TWID_WIDTH + 1 : 0] yp_i,
+    output logic [DATA_WIDTH + TWID_WIDTH + 1 : 0] yq_r,
+    output logic [DATA_WIDTH + TWID_WIDTH + 1 : 0] yq_i
 );
 
 logic signed [DATA_WIDTH - 1 : 0] xp_r_s;
@@ -42,12 +42,12 @@ always_comb begin
         wn_i_s = wn_i;
 end
 
-logic signed [DATA_WIDTH + TWID_WIDTH - 2 : 0] temp_ac;
-logic signed [DATA_WIDTH + TWID_WIDTH - 2 : 0] temp_bd;
-logic signed [DATA_WIDTH + TWID_WIDTH - 2 : 0] temp_ad;
-logic signed [DATA_WIDTH + TWID_WIDTH - 2 : 0] temp_bc;
-logic signed [DATA_WIDTH + TWID_WIDTH - 2 : 0] xp_r_d;
-logic signed [DATA_WIDTH + TWID_WIDTH - 2 : 0] xp_i_d;
+logic signed [DATA_WIDTH + TWID_WIDTH - 1 : 0] temp_ac;
+logic signed [DATA_WIDTH + TWID_WIDTH - 1 : 0] temp_bd;
+logic signed [DATA_WIDTH + TWID_WIDTH - 1 : 0] temp_ad;
+logic signed [DATA_WIDTH + TWID_WIDTH - 1 : 0] temp_bc;
+logic signed [DATA_WIDTH + TWID_WIDTH - 1 : 0] xp_r_d;
+logic signed [DATA_WIDTH + TWID_WIDTH - 1 : 0] xp_i_d;
 
 
 always_ff @( posedge clk,negedge rst_n ) begin 
@@ -68,10 +68,10 @@ always_ff @( posedge clk,negedge rst_n ) begin
     end
 end
 
-logic signed [DATA_WIDTH + TWID_WIDTH - 1 : 0] temp_ac_bd;
-logic signed [DATA_WIDTH + TWID_WIDTH - 1 : 0] temp_ad_bc;
-logic signed [DATA_WIDTH + TWID_WIDTH - 1 : 0] xp_r_d1;
-logic signed [DATA_WIDTH + TWID_WIDTH - 1 : 0] xp_i_d1;
+logic signed [DATA_WIDTH + TWID_WIDTH : 0] temp_ac_bd;
+logic signed [DATA_WIDTH + TWID_WIDTH : 0] temp_ad_bc;
+logic signed [DATA_WIDTH + TWID_WIDTH : 0] xp_r_d1;
+logic signed [DATA_WIDTH + TWID_WIDTH : 0] xp_i_d1;
 
 always_ff @( posedge clk,negedge rst_n ) begin
     if(!rst_n)begin
@@ -87,10 +87,10 @@ always_ff @( posedge clk,negedge rst_n ) begin
     end
 end
 
-logic signed [DATA_WIDTH + TWID_WIDTH : 0] temp_yp_r;
-logic signed [DATA_WIDTH + TWID_WIDTH : 0] temp_yp_i;
-logic signed [DATA_WIDTH + TWID_WIDTH : 0] temp_yq_r;
-logic signed [DATA_WIDTH + TWID_WIDTH : 0] temp_yq_i;
+logic signed [DATA_WIDTH + TWID_WIDTH + 1 : 0] temp_yp_r;
+logic signed [DATA_WIDTH + TWID_WIDTH + 1 : 0] temp_yp_i;
+logic signed [DATA_WIDTH + TWID_WIDTH + 1 : 0] temp_yq_r;
+logic signed [DATA_WIDTH + TWID_WIDTH + 1 : 0] temp_yq_i;
 
 always_ff @( posedge clk,negedge rst_n ) begin
     if(!rst_n)begin

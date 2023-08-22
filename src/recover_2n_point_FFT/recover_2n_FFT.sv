@@ -3,7 +3,7 @@ module recover_2n_FFT #(
     parameter TWID_WIDTH = 16,
     //Truncate at bit MSB_CUTOFF
     parameter LSB_CUTOFF = 12,                   // [DATA_WIDTH + TWID_WIDTH +1 : 0] temp_dataout_r[15:0];
-    //parameter MSB_CUTOFF = 31,                   // [DATA_WIDTH + TWID_WIDTH + 1 - LSB_CUTOFF : 0] temp_cut_tail_r[3:0];
+    parameter MSB_CUTOFF = 31,                   // [DATA_WIDTH + TWID_WIDTH + 1 - LSB_CUTOFF : 0] temp_cut_tail_r[3:0];
     parameter SHIFT = 15
 ) (
     input logic clk,
@@ -48,8 +48,8 @@ logic signed [DATA_WIDTH - 1 : 0] temp_x2_i[7:0];
 logic signed [TWID_WIDTH - 1 : 0] temp_wn_r[7:0];
 logic signed [TWID_WIDTH - 1 : 0] temp_wn_i[7:0];
 
-logic signed [DATA_WIDTH + TWID_WIDTH : 0] temp_dataout_r[15:0];
-logic signed [DATA_WIDTH + TWID_WIDTH : 0] temp_dataout_i[15:0];
+logic signed [DATA_WIDTH + TWID_WIDTH + 1 : 0] temp_dataout_r[15:0];
+logic signed [DATA_WIDTH + TWID_WIDTH + 1 : 0] temp_dataout_i[15:0];
 
 logic [63:0] twiddle_col1[3:0];
 logic [63:0] twiddle_col2[3:0];
@@ -199,23 +199,23 @@ generate
 endgenerate
 
 //rounding
-logic signed [31 : 0] temp_cut_tail_r[7:0];
-logic signed [31 : 0] temp_cut_tail_i[7:0];
+logic signed [32 : 0] temp_cut_tail_r[7:0];
+logic signed [32 : 0] temp_cut_tail_i[7:0];
 
 always_comb begin : CUT_tail_r
     for (int n = 0;n < 8 ;n++ ) begin
-        if (temp_dataout_r[n][DATA_WIDTH + TWID_WIDTH] == 0) begin
+        if (temp_dataout_r[n][DATA_WIDTH + TWID_WIDTH + 1] == 0) begin
             if (temp_dataout_r[n][LSB_CUTOFF - 1] == 1) begin
-                temp_cut_tail_r[n] =  temp_dataout_r[n][DATA_WIDTH + TWID_WIDTH : LSB_CUTOFF] + 'b1;
+                temp_cut_tail_r[n] =  temp_dataout_r[n][DATA_WIDTH + TWID_WIDTH + 1 : LSB_CUTOFF] + 'b1;
             end else begin
-                temp_cut_tail_r[n] =  temp_dataout_r[n][DATA_WIDTH + TWID_WIDTH : LSB_CUTOFF];
+                temp_cut_tail_r[n] =  temp_dataout_r[n][DATA_WIDTH + TWID_WIDTH + 1 : LSB_CUTOFF];
             end
             
-        end else if (temp_dataout_r[n][DATA_WIDTH + TWID_WIDTH] == 1) begin
+        end else if (temp_dataout_r[n][DATA_WIDTH + TWID_WIDTH + 1] == 1) begin
             if (temp_dataout_r[n][LSB_CUTOFF - 1] == 1 && (|temp_dataout_r[n][LSB_CUTOFF - 2:0] == 1)) begin
-                temp_cut_tail_r[n] =  temp_dataout_r[n][DATA_WIDTH + TWID_WIDTH : LSB_CUTOFF] + 'b1;
+                temp_cut_tail_r[n] =  temp_dataout_r[n][DATA_WIDTH + TWID_WIDTH + 1 : LSB_CUTOFF] + 'b1;
             end else begin
-                temp_cut_tail_r[n] =  temp_dataout_r[n][DATA_WIDTH + TWID_WIDTH : LSB_CUTOFF];
+                temp_cut_tail_r[n] =  temp_dataout_r[n][DATA_WIDTH + TWID_WIDTH + 1 : LSB_CUTOFF];
             end
         end
     end 
@@ -223,50 +223,50 @@ end
 
 always_comb begin : CUT_tail_i
     for (int n = 0;n < 8 ;n++ ) begin
-        if (temp_dataout_i[n][DATA_WIDTH + TWID_WIDTH] == 0) begin
+        if (temp_dataout_i[n][DATA_WIDTH + TWID_WIDTH + 1] == 0) begin
             if (temp_dataout_i[n][LSB_CUTOFF - 1] == 1) begin
-                temp_cut_tail_i[n] =  temp_dataout_i[n][DATA_WIDTH + TWID_WIDTH : LSB_CUTOFF] + 'b1;
+                temp_cut_tail_i[n] =  temp_dataout_i[n][DATA_WIDTH + TWID_WIDTH + 1 : LSB_CUTOFF] + 'b1;
             end else begin
-                temp_cut_tail_i[n] =  temp_dataout_i[n][DATA_WIDTH + TWID_WIDTH : LSB_CUTOFF];
+                temp_cut_tail_i[n] =  temp_dataout_i[n][DATA_WIDTH + TWID_WIDTH + 1 : LSB_CUTOFF];
             end
             
-        end else if (temp_dataout_i[n][DATA_WIDTH + TWID_WIDTH] == 1) begin
+        end else if (temp_dataout_i[n][DATA_WIDTH + TWID_WIDTH + 1] == 1) begin
             if (temp_dataout_i[n][LSB_CUTOFF - 1] == 1 && (|temp_dataout_i[n][LSB_CUTOFF - 2:0] == 1)) begin
-                temp_cut_tail_i[n] =  temp_dataout_i[n][DATA_WIDTH + TWID_WIDTH : LSB_CUTOFF] + 'b1;
+                temp_cut_tail_i[n] =  temp_dataout_i[n][DATA_WIDTH + TWID_WIDTH + 1 : LSB_CUTOFF] + 'b1;
             end else begin
-                temp_cut_tail_i[n] =  temp_dataout_i[n][DATA_WIDTH + TWID_WIDTH : LSB_CUTOFF];
+                temp_cut_tail_i[n] =  temp_dataout_i[n][DATA_WIDTH + TWID_WIDTH + 1 : LSB_CUTOFF];
             end
         end
     end 
 end
   
 //clamp
-// logic signed [DATA_WIDTH - 1 : 0] res_r_cut[15:0];
-// logic signed [DATA_WIDTH - 1 : 0] res_i_cut[15:0];
+logic signed [31 : 0] res_r_cut[7:0];
+logic signed [31 : 0] res_i_cut[7:0];
 
-// always_comb begin : CUT_head_r
-//     for (int n = 0;n < 16 ;n++ ) begin
-//         if ((temp_cut_tail_r[n][DATA_WIDTH + TWID_WIDTH + 1 - LSB_CUTOFF] == 1) && (&temp_cut_tail_r[n][(DATA_WIDTH + TWID_WIDTH + 1 - LSB_CUTOFF):(MSB_CUTOFF)] == 0)) begin
-//             res_r_cut[n] = {1'b1,{(DATA_WIDTH-1){1'b0}}};
-//         end else if ((temp_cut_tail_r[n][DATA_WIDTH + TWID_WIDTH + 1 - LSB_CUTOFF] == 0) && (|temp_cut_tail_r[n][(DATA_WIDTH + TWID_WIDTH + 1 - LSB_CUTOFF):(MSB_CUTOFF)] == 1)) begin
-//             res_r_cut[n] = {1'b0,{(DATA_WIDTH-1){1'b1}}};
-//         end else begin
-//             res_r_cut[n] = {temp_cut_tail_r[n][DATA_WIDTH + TWID_WIDTH + 1 - LSB_CUTOFF],temp_cut_tail_r[n][MSB_CUTOFF - 1:0]};
-//         end
-//     end
-// end 
+always_comb begin : CUT_head_r
+    for (int n = 0;n < 8 ;n++ ) begin
+        if ((temp_cut_tail_r[n][DATA_WIDTH + TWID_WIDTH + 1 - LSB_CUTOFF] == 1) && (&temp_cut_tail_r[n][(DATA_WIDTH + TWID_WIDTH + 1 - LSB_CUTOFF):(MSB_CUTOFF)] == 0)) begin
+            res_r_cut[n] = {1'b1,{(DATA_WIDTH-1){1'b0}}};
+        end else if ((temp_cut_tail_r[n][DATA_WIDTH + TWID_WIDTH + 1 - LSB_CUTOFF] == 0) && (|temp_cut_tail_r[n][(DATA_WIDTH + TWID_WIDTH + 1 - LSB_CUTOFF):(MSB_CUTOFF)] == 1)) begin
+            res_r_cut[n] = {1'b0,{(DATA_WIDTH-1){1'b1}}};
+        end else begin
+            res_r_cut[n] = {temp_cut_tail_r[n][DATA_WIDTH + TWID_WIDTH + 1 - LSB_CUTOFF],temp_cut_tail_r[n][MSB_CUTOFF - 1:0]};
+        end
+    end
+end 
   
-// always_comb begin : CUT_head_i
-//     for (int n = 0;n < 16 ;n++ ) begin
-//         if ((temp_cut_tail_i[n][DATA_WIDTH + TWID_WIDTH + 1 - LSB_CUTOFF] == 1) && (&temp_cut_tail_i[n][(DATA_WIDTH + TWID_WIDTH + 1 - LSB_CUTOFF):(MSB_CUTOFF)] == 0)) begin
-//             res_i_cut[n] = {1'b1,{(DATA_WIDTH-1){1'b0}}};
-//         end else if ((temp_cut_tail_i[n][DATA_WIDTH + TWID_WIDTH + 1 - LSB_CUTOFF] == 0) && (|temp_cut_tail_i[n][(DATA_WIDTH + TWID_WIDTH + 1 - LSB_CUTOFF):(MSB_CUTOFF)] == 1)) begin
-//             res_i_cut[n] = {1'b0,{(DATA_WIDTH-1){1'b1}}};
-//         end else begin
-//             res_i_cut[n] = {temp_cut_tail_i[n][DATA_WIDTH + TWID_WIDTH + 1 - LSB_CUTOFF],temp_cut_tail_i[n][MSB_CUTOFF - 1:0]};
-//         end
-//     end
-// end
+always_comb begin : CUT_head_i
+    for (int n = 0;n < 8 ;n++ ) begin
+        if ((temp_cut_tail_i[n][DATA_WIDTH + TWID_WIDTH + 1 - LSB_CUTOFF] == 1) && (&temp_cut_tail_i[n][(DATA_WIDTH + TWID_WIDTH + 1 - LSB_CUTOFF):(MSB_CUTOFF)] == 0)) begin
+            res_i_cut[n] = {1'b1,{(DATA_WIDTH-1){1'b0}}};
+        end else if ((temp_cut_tail_i[n][DATA_WIDTH + TWID_WIDTH + 1 - LSB_CUTOFF] == 0) && (|temp_cut_tail_i[n][(DATA_WIDTH + TWID_WIDTH + 1 - LSB_CUTOFF):(MSB_CUTOFF)] == 1)) begin
+            res_i_cut[n] = {1'b0,{(DATA_WIDTH-1){1'b1}}};
+        end else begin
+            res_i_cut[n] = {temp_cut_tail_i[n][DATA_WIDTH + TWID_WIDTH + 1 - LSB_CUTOFF],temp_cut_tail_i[n][MSB_CUTOFF - 1:0]};
+        end
+    end
+end
 
 //data_out
 always_ff @( posedge clk,negedge rst_n ) begin
@@ -280,10 +280,10 @@ always_ff @( posedge clk,negedge rst_n ) begin
 
     end else begin
         for (int i = 0;i < 4 ;i++ ) begin
-            dataout_col1_r[i] <= temp_cut_tail_r[i];
-            dataout_col1_i[i] <= temp_cut_tail_i[i];
-            dataout_col2_r[i] <= temp_cut_tail_r[4+i];
-            dataout_col2_i[i] <= temp_cut_tail_i[4+i];
+            dataout_col1_r[i] <= res_r_cut[i];
+            dataout_col1_i[i] <= res_i_cut[i];
+            dataout_col2_r[i] <= res_r_cut[4+i];
+            dataout_col2_i[i] <= res_i_cut[4+i];
         end            
     end
 end
