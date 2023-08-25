@@ -199,8 +199,8 @@ generate
 endgenerate
 
 //rounding
-logic signed [32 : 0] temp_cut_tail_r[7:0];
-logic signed [32 : 0] temp_cut_tail_i[7:0];
+logic signed [32 : 0] temp_cut_tail_r_reg[7:0];
+logic signed [32 : 0] temp_cut_tail_i_reg[7:0];
 
 always_comb begin : CUT_tail_r
     for (int n = 0;n < 8 ;n++ ) begin
@@ -208,21 +208,21 @@ always_comb begin : CUT_tail_r
             if (temp_dataout_r[n][LSB_CUTOFF - 1] == 1) begin
 
                 if (&temp_dataout_r[n][DATA_WIDTH + TWID_WIDTH : LSB_CUTOFF]) begin
-                    temp_cut_tail_r[n] = {1'b0,{(DATA_WIDTH + TWID_WIDTH + 1 - LSB_CUTOFF){1'b1}}};
+                    temp_cut_tail_r_reg[n] = {1'b0,{(DATA_WIDTH + TWID_WIDTH + 1 - LSB_CUTOFF){1'b1}}};
                 end else begin
-                    temp_cut_tail_r[n] =  temp_dataout_r[n][DATA_WIDTH + TWID_WIDTH + 1 : LSB_CUTOFF] + 'b1;   
+                    temp_cut_tail_r_reg[n] =  temp_dataout_r[n][DATA_WIDTH + TWID_WIDTH + 1 : LSB_CUTOFF] + 'b1;   
                 end
 
-                //temp_cut_tail_r[n] =  temp_dataout_r[n][DATA_WIDTH + TWID_WIDTH + 1 : LSB_CUTOFF] + 'b1;
+                //temp_cut_tail_r_reg[n] =  temp_dataout_r[n][DATA_WIDTH + TWID_WIDTH + 1 : LSB_CUTOFF] + 'b1;
             end else begin
-                temp_cut_tail_r[n] =  temp_dataout_r[n][DATA_WIDTH + TWID_WIDTH + 1 : LSB_CUTOFF];
+                temp_cut_tail_r_reg[n] =  temp_dataout_r[n][DATA_WIDTH + TWID_WIDTH + 1 : LSB_CUTOFF];
             end
             
         end else if (temp_dataout_r[n][DATA_WIDTH + TWID_WIDTH + 1] == 1) begin
             if (temp_dataout_r[n][LSB_CUTOFF - 1] == 1 && (|temp_dataout_r[n][LSB_CUTOFF - 2:0] == 1)) begin
-                temp_cut_tail_r[n] =  temp_dataout_r[n][DATA_WIDTH + TWID_WIDTH + 1 : LSB_CUTOFF] + 'b1;
+                temp_cut_tail_r_reg[n] =  temp_dataout_r[n][DATA_WIDTH + TWID_WIDTH + 1 : LSB_CUTOFF] + 'b1;
             end else begin
-                temp_cut_tail_r[n] =  temp_dataout_r[n][DATA_WIDTH + TWID_WIDTH + 1 : LSB_CUTOFF];
+                temp_cut_tail_r_reg[n] =  temp_dataout_r[n][DATA_WIDTH + TWID_WIDTH + 1 : LSB_CUTOFF];
             end
         end
     end 
@@ -234,26 +234,44 @@ always_comb begin : CUT_tail_i
             if (temp_dataout_i[n][LSB_CUTOFF - 1] == 1) begin
 
                 if (&temp_dataout_i[n][DATA_WIDTH + TWID_WIDTH : LSB_CUTOFF]) begin
-                    temp_cut_tail_i[n] = {1'b0,{(DATA_WIDTH + TWID_WIDTH + 1 - LSB_CUTOFF){1'b1}}};
+                    temp_cut_tail_i_reg[n] = {1'b0,{(DATA_WIDTH + TWID_WIDTH + 1 - LSB_CUTOFF){1'b1}}};
                 end else begin
-                    temp_cut_tail_i[n] =  temp_dataout_i[n][DATA_WIDTH + TWID_WIDTH + 1 : LSB_CUTOFF] + 'b1;   
+                    temp_cut_tail_i_reg[n] =  temp_dataout_i[n][DATA_WIDTH + TWID_WIDTH + 1 : LSB_CUTOFF] + 'b1;   
                 end
 
-                //temp_cut_tail_i[n] =  temp_dataout_i[n][DATA_WIDTH + TWID_WIDTH + 1 : LSB_CUTOFF] + 'b1;
+                //temp_cut_tail_i_reg[n] =  temp_dataout_i[n][DATA_WIDTH + TWID_WIDTH + 1 : LSB_CUTOFF] + 'b1;
             end else begin
-                temp_cut_tail_i[n] =  temp_dataout_i[n][DATA_WIDTH + TWID_WIDTH + 1 : LSB_CUTOFF];
+                temp_cut_tail_i_reg[n] =  temp_dataout_i[n][DATA_WIDTH + TWID_WIDTH + 1 : LSB_CUTOFF];
             end
             
         end else if (temp_dataout_i[n][DATA_WIDTH + TWID_WIDTH + 1] == 1) begin
             if (temp_dataout_i[n][LSB_CUTOFF - 1] == 1 && (|temp_dataout_i[n][LSB_CUTOFF - 2:0] == 1)) begin
-                temp_cut_tail_i[n] =  temp_dataout_i[n][DATA_WIDTH + TWID_WIDTH + 1 : LSB_CUTOFF] + 'b1;
+                temp_cut_tail_i_reg[n] =  temp_dataout_i[n][DATA_WIDTH + TWID_WIDTH + 1 : LSB_CUTOFF] + 'b1;
             end else begin
-                temp_cut_tail_i[n] =  temp_dataout_i[n][DATA_WIDTH + TWID_WIDTH + 1 : LSB_CUTOFF];
+                temp_cut_tail_i_reg[n] =  temp_dataout_i[n][DATA_WIDTH + TWID_WIDTH + 1 : LSB_CUTOFF];
             end
         end
     end 
 end
-  
+
+//Register once between clamp and rounding
+logic signed [32 : 0] temp_cut_tail_r[7:0];
+logic signed [32 : 0] temp_cut_tail_i[7:0];
+
+always_ff @( posedge clk,negedge rst_n ) begin
+    if (!rst_n) begin
+        for (int n = 0;n < 8 ;n++ ) begin
+            temp_cut_tail_r[n] <= 'b0;
+            temp_cut_tail_i[n] <= 'b0;
+        end
+    end else begin
+        for (int n = 0;n < 8 ;n++ ) begin
+            temp_cut_tail_r[n] <= temp_cut_tail_r_reg[n];
+            temp_cut_tail_i[n] <= temp_cut_tail_i_reg[n];
+        end
+    end
+end
+
 //clamp
 logic signed [31 : 0] res_r_cut[7:0];
 logic signed [31 : 0] res_i_cut[7:0];
@@ -310,6 +328,7 @@ logic valid2;
 logic valid3;
 logic valid4;
 logic valid5;
+logic valid6;
 
 always_ff @( posedge clk , negedge rst_n ) begin 
     if (!rst_n) begin
@@ -320,8 +339,9 @@ always_ff @( posedge clk , negedge rst_n ) begin
         valid3 <= 'b0;
         valid4 <= 'b0;
         valid5 <= 'b0;
+        valid6 <= 'b0;
     end else begin
-        {ready,valid0,valid1,valid2,valid3,valid4,valid5} <= {valid0,valid1,valid2,valid3,valid4,valid5,valid};
+        {ready,valid0,valid1,valid2,valid3,valid4,valid5,valid6} <= {valid0,valid1,valid2,valid3,valid4,valid5,valid6,valid};
     end
 end
 //output index_col_1 & index_col_2
@@ -331,6 +351,7 @@ logic [10:0] index_col1_2;
 logic [10:0] index_col1_3;
 logic [10:0] index_col1_4;
 logic [10:0] index_col1_5;
+logic [10:0] index_col1_6;
 
 
 logic [10:0] index_col2_0;
@@ -339,6 +360,7 @@ logic [10:0] index_col2_2;
 logic [10:0] index_col2_3;
 logic [10:0] index_col2_4;
 logic [10:0] index_col2_5;
+logic [10:0] index_col2_6;
 
 
 always_ff @( posedge clk , negedge rst_n ) begin 
@@ -350,6 +372,7 @@ always_ff @( posedge clk , negedge rst_n ) begin
         index_col1_3 <= 'b0;
         index_col1_4 <= 'b0;
         index_col1_5 <= 'b0;
+        index_col1_6 <= 'b0;
 
         output_index_col2 <= 'b0;
         index_col2_0 <= 'b0;
@@ -358,9 +381,10 @@ always_ff @( posedge clk , negedge rst_n ) begin
         index_col2_3 <= 'b0;
         index_col2_4 <= 'b0;
         index_col2_5 <= 'b0;
+        index_col2_6 <= 'b0;
     end else begin
-        {output_index_col1,index_col1_0,index_col1_1,index_col1_2,index_col1_3,index_col1_4,index_col1_5} <= {index_col1_0,index_col1_1,index_col1_2,index_col1_3,index_col1_4,index_col1_5,index_col_1};
-        {output_index_col2,index_col2_0,index_col2_1,index_col2_2,index_col2_3,index_col2_4,index_col2_5} <= {index_col2_0,index_col2_1,index_col2_2,index_col2_3,index_col2_4,index_col2_5,index_col_2};
+        {output_index_col1,index_col1_0,index_col1_1,index_col1_2,index_col1_3,index_col1_4,index_col1_5,index_col1_6} <= {index_col1_0,index_col1_1,index_col1_2,index_col1_3,index_col1_4,index_col1_5,index_col1_6,index_col_1};
+        {output_index_col2,index_col2_0,index_col2_1,index_col2_2,index_col2_3,index_col2_4,index_col2_5,index_col2_6} <= {index_col2_0,index_col2_1,index_col2_2,index_col2_3,index_col2_4,index_col2_5,index_col2_6,index_col_2};
     end
 end
 

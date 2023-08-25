@@ -105,8 +105,8 @@ module intergral #(
     end
 
 //rounding
-logic [IN_DATA_WIDTH * 2 - LSB_CUTOFF : 0] temp_cut_tail_col1[3:0];
-logic [IN_DATA_WIDTH * 2 - LSB_CUTOFF : 0] temp_cut_tail_col2[3:0];
+logic [IN_DATA_WIDTH * 2 - LSB_CUTOFF : 0] temp_cut_tail_col1_reg[3:0];
+logic [IN_DATA_WIDTH * 2 - LSB_CUTOFF : 0] temp_cut_tail_col2_reg[3:0];
 
     always_comb begin : CUT_tail_add_square_col1
         for (int n = 0;n < 4 ;n++ ) begin
@@ -114,21 +114,21 @@ logic [IN_DATA_WIDTH * 2 - LSB_CUTOFF : 0] temp_cut_tail_col2[3:0];
                 if (add_square_col1[n][LSB_CUTOFF - 1] == 1) begin
 
                     if (&add_square_col1[n][IN_DATA_WIDTH * 2 - 1 : LSB_CUTOFF]) begin
-                        temp_cut_tail_col1[n] = {1'b0,{(IN_DATA_WIDTH * 2 - LSB_CUTOFF){1'b0}}};
+                        temp_cut_tail_col1_reg[n] = {1'b0,{(IN_DATA_WIDTH * 2 - LSB_CUTOFF){1'b0}}};
                     end else begin
-                        temp_cut_tail_col1[n] =  add_square_col1[n][IN_DATA_WIDTH * 2 : LSB_CUTOFF] + 'b1;   
+                        temp_cut_tail_col1_reg[n] =  add_square_col1[n][IN_DATA_WIDTH * 2 : LSB_CUTOFF] + 'b1;   
                     end
 
-                    //temp_cut_tail_col1[n] =  add_square_col1[n][IN_DATA_WIDTH * 2 : LSB_CUTOFF] + 'b1;
+                    //temp_cut_tail_col1_reg[n] =  add_square_col1[n][IN_DATA_WIDTH * 2 : LSB_CUTOFF] + 'b1;
                 end else begin
-                    temp_cut_tail_col1[n] =  add_square_col1[n][IN_DATA_WIDTH * 2 : LSB_CUTOFF];
+                    temp_cut_tail_col1_reg[n] =  add_square_col1[n][IN_DATA_WIDTH * 2 : LSB_CUTOFF];
                 end
                 
             end else begin
                 if (add_square_col1[n][LSB_CUTOFF - 1] == 1 && (|add_square_col1[n][LSB_CUTOFF - 2:0] == 1)) begin
-                    temp_cut_tail_col1[n] =  add_square_col1[n][IN_DATA_WIDTH * 2 : LSB_CUTOFF] + 'b1;
+                    temp_cut_tail_col1_reg[n] =  add_square_col1[n][IN_DATA_WIDTH * 2 : LSB_CUTOFF] + 'b1;
                 end else begin
-                    temp_cut_tail_col1[n] =  add_square_col1[n][IN_DATA_WIDTH * 2 : LSB_CUTOFF];
+                    temp_cut_tail_col1_reg[n] =  add_square_col1[n][IN_DATA_WIDTH * 2 : LSB_CUTOFF];
                 end
             end
         end 
@@ -140,26 +140,44 @@ logic [IN_DATA_WIDTH * 2 - LSB_CUTOFF : 0] temp_cut_tail_col2[3:0];
                 if (add_square_col2[n][LSB_CUTOFF - 1] == 1) begin
 
                     if (&add_square_col2[n][IN_DATA_WIDTH * 2 - 1 : LSB_CUTOFF]) begin
-                        temp_cut_tail_col2[n] = {1'b0,{(IN_DATA_WIDTH * 2 - LSB_CUTOFF){1'b0}}};
+                        temp_cut_tail_col2_reg[n] = {1'b0,{(IN_DATA_WIDTH * 2 - LSB_CUTOFF){1'b0}}};
                     end else begin
-                        temp_cut_tail_col2[n] = add_square_col2[n][IN_DATA_WIDTH * 2 : LSB_CUTOFF] + 'b1;   
+                        temp_cut_tail_col2_reg[n] = add_square_col2[n][IN_DATA_WIDTH * 2 : LSB_CUTOFF] + 'b1;   
                     end
                     
-                    //temp_cut_tail_col2[n] = add_square_col2[n][IN_DATA_WIDTH * 2 : LSB_CUTOFF] + 'b1;
+                    //temp_cut_tail_col2_reg[n] = add_square_col2[n][IN_DATA_WIDTH * 2 : LSB_CUTOFF] + 'b1;
                 end else begin
-                    temp_cut_tail_col2[n] = add_square_col2[n][IN_DATA_WIDTH * 2 : LSB_CUTOFF];
+                    temp_cut_tail_col2_reg[n] = add_square_col2[n][IN_DATA_WIDTH * 2 : LSB_CUTOFF];
                 end
                 
             end else begin
                 if (add_square_col2[n][LSB_CUTOFF - 1] == 1 && (|add_square_col2[n][LSB_CUTOFF - 2:0] == 1)) begin
-                    temp_cut_tail_col2[n] = add_square_col2[n][IN_DATA_WIDTH * 2 : LSB_CUTOFF] + 'b1;
+                    temp_cut_tail_col2_reg[n] = add_square_col2[n][IN_DATA_WIDTH * 2 : LSB_CUTOFF] + 'b1;
                 end else begin
-                    temp_cut_tail_col2[n] = add_square_col2[n][IN_DATA_WIDTH * 2 : LSB_CUTOFF];
+                    temp_cut_tail_col2_reg[n] = add_square_col2[n][IN_DATA_WIDTH * 2 : LSB_CUTOFF];
                 end
             end
         end 
     end
-  
+
+//Register once between clamp and rounding
+logic [IN_DATA_WIDTH * 2 - LSB_CUTOFF : 0] temp_cut_tail_col1[3:0];
+logic [IN_DATA_WIDTH * 2 - LSB_CUTOFF : 0] temp_cut_tail_col2[3:0];
+
+always_ff @( posedge clk,negedge rst_n ) begin
+    if (!rst_n) begin
+        for (int n = 0;n < 4 ;n++ ) begin
+            temp_cut_tail_col1[n] <= 'b0;
+            temp_cut_tail_col2[n] <= 'b0;
+        end
+    end else begin
+        for (int n = 0;n < 4 ;n++ ) begin
+            temp_cut_tail_col1[n] <= temp_cut_tail_col1_reg[n];
+            temp_cut_tail_col2[n] <= temp_cut_tail_col2_reg[n];
+        end
+    end
+end
+
 //clamp
 logic [OUT_DATA_WIDTH - 1 : 0] res_col1_cut[3:0];
 logic [OUT_DATA_WIDTH - 1 : 0] res_col2_cut[3:0];
@@ -203,6 +221,7 @@ end
 logic valid0;
 logic valid1;
 logic valid2;
+logic valid3;
 
 always_ff @( posedge clk , negedge rst_n ) begin 
     if (!rst_n) begin
@@ -210,9 +229,10 @@ always_ff @( posedge clk , negedge rst_n ) begin
         valid0 <= 'b0;
         valid1 <= 'b0;
         valid2 <= 'b0;
+        valid3 <= 'b0;
 
     end else begin
-        {ready,valid0,valid1,valid2} <= {valid0,valid1,valid2,valid};
+        {ready,valid0,valid1,valid2,valid3} <= {valid0,valid1,valid2,valid3,valid};
     end
 end
 
@@ -220,26 +240,30 @@ end
 logic [10:0] index_col1_0;
 logic [10:0] index_col1_1;
 logic [10:0] index_col1_2;
+logic [10:0] index_col1_3;
 
 logic [10:0] index_col2_0;
 logic [10:0] index_col2_1;
 logic [10:0] index_col2_2;
+logic [10:0] index_col2_3;
 
 always_ff @( posedge clk , negedge rst_n ) begin 
     if (!rst_n) begin
         index_col1_0 <= 'b0;
         index_col1_1 <= 'b0;
         index_col1_2 <= 'b0;
+        index_col1_3 <= 'b0;
         out_index_col1 <= 'b0;
 
         index_col2_0 <= 'b0;
         index_col2_1 <= 'b0;
         index_col2_2 <= 'b0;
+        index_col2_3 <= 'b0;
         out_index_col2 <= 'b0;
     
     end else begin
-        {out_index_col1,index_col1_0,index_col1_1,index_col1_2} <= {index_col1_0,index_col1_1,index_col1_2,index_col_1};
-        {out_index_col2,index_col2_0,index_col2_1,index_col2_2} <= {index_col2_0,index_col2_1,index_col2_2,index_col_2};
+        {out_index_col1,index_col1_0,index_col1_1,index_col1_2,index_col1_3} <= {index_col1_0,index_col1_1,index_col1_2,index_col1_3,index_col_1};
+        {out_index_col2,index_col2_0,index_col2_1,index_col2_2,index_col2_3} <= {index_col2_0,index_col2_1,index_col2_2,index_col2_3,index_col_2};
     end
 end
 

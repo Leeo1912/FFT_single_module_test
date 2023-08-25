@@ -231,8 +231,8 @@ always_ff @( posedge clk , negedge rst_n ) begin
 end
 
 //rounding
-logic signed [DATA_WIDTH + TWID_WIDTH + 2 - LSB_CUTOFF : 0] temp_cut_tail_r[3:0];
-logic signed [DATA_WIDTH + TWID_WIDTH + 2 - LSB_CUTOFF : 0] temp_cut_tail_i[3:0];
+logic signed [DATA_WIDTH + TWID_WIDTH + 2 - LSB_CUTOFF : 0] temp_cut_tail_r_reg[3:0];
+logic signed [DATA_WIDTH + TWID_WIDTH + 2 - LSB_CUTOFF : 0] temp_cut_tail_i_reg[3:0];
 
 always_comb begin : CUT_tail_r
     for (int n = 0;n < 4 ;n++ ) begin
@@ -240,20 +240,20 @@ always_comb begin : CUT_tail_r
             if (temp_add_r_res[n][LSB_CUTOFF - 1] == 1) begin
 
                 if (&temp_add_r_res[n][DATA_WIDTH + TWID_WIDTH + 1 : LSB_CUTOFF]) begin
-                    temp_cut_tail_r[n] = {1'b0,{(DATA_WIDTH + TWID_WIDTH + 2 - LSB_CUTOFF){1'b1}}};
+                    temp_cut_tail_r_reg[n] = {1'b0,{(DATA_WIDTH + TWID_WIDTH + 2 - LSB_CUTOFF){1'b1}}};
                 end else begin
-                    temp_cut_tail_r[n] =  temp_add_r_res[n][DATA_WIDTH + TWID_WIDTH + 2 : LSB_CUTOFF] + 'b1;   
+                    temp_cut_tail_r_reg[n] =  temp_add_r_res[n][DATA_WIDTH + TWID_WIDTH + 2 : LSB_CUTOFF] + 'b1;   
                 end
 
             end else begin
-                temp_cut_tail_r[n] =  temp_add_r_res[n][DATA_WIDTH + TWID_WIDTH + 2 : LSB_CUTOFF];
+                temp_cut_tail_r_reg[n] =  temp_add_r_res[n][DATA_WIDTH + TWID_WIDTH + 2 : LSB_CUTOFF];
             end
             
         end else if (temp_add_r_res[n][DATA_WIDTH + TWID_WIDTH + 2] == 1) begin
             if (temp_add_r_res[n][LSB_CUTOFF - 1] == 1 && (|temp_add_r_res[n][LSB_CUTOFF - 2:0] == 1)) begin
-                temp_cut_tail_r[n] =  temp_add_r_res[n][DATA_WIDTH + TWID_WIDTH + 2 : LSB_CUTOFF] + 'b1;
+                temp_cut_tail_r_reg[n] =  temp_add_r_res[n][DATA_WIDTH + TWID_WIDTH + 2 : LSB_CUTOFF] + 'b1;
             end else begin
-                temp_cut_tail_r[n] =  temp_add_r_res[n][DATA_WIDTH + TWID_WIDTH + 2 : LSB_CUTOFF];
+                temp_cut_tail_r_reg[n] =  temp_add_r_res[n][DATA_WIDTH + TWID_WIDTH + 2 : LSB_CUTOFF];
             end
         end
     end 
@@ -265,26 +265,45 @@ always_comb begin : CUT_tail_i
             if (temp_add_i_res[n][LSB_CUTOFF - 1] == 1) begin
 
                 if (&temp_add_i_res[n][DATA_WIDTH + TWID_WIDTH + 1 : LSB_CUTOFF]) begin
-                    temp_cut_tail_i[n] = {1'b0,{(DATA_WIDTH + TWID_WIDTH + 2 - LSB_CUTOFF){1'b1}}};
+                    temp_cut_tail_i_reg[n] = {1'b0,{(DATA_WIDTH + TWID_WIDTH + 2 - LSB_CUTOFF){1'b1}}};
                 end else begin
-                    temp_cut_tail_i[n] =  temp_add_i_res[n][DATA_WIDTH + TWID_WIDTH + 2 : LSB_CUTOFF] + 'b1;   
+                    temp_cut_tail_i_reg[n] =  temp_add_i_res[n][DATA_WIDTH + TWID_WIDTH + 2 : LSB_CUTOFF] + 'b1;   
                 end
                 
-                 //temp_cut_tail_i[n] =  temp_add_i_res[n][DATA_WIDTH + TWID_WIDTH + 2 : LSB_CUTOFF] + 'b1;
+                 //temp_cut_tail_i_reg[n] =  temp_add_i_res[n][DATA_WIDTH + TWID_WIDTH + 2 : LSB_CUTOFF] + 'b1;
             end else begin
-                 temp_cut_tail_i[n] =  temp_add_i_res[n][DATA_WIDTH + TWID_WIDTH + 2 : LSB_CUTOFF];
+                 temp_cut_tail_i_reg[n] =  temp_add_i_res[n][DATA_WIDTH + TWID_WIDTH + 2 : LSB_CUTOFF];
             end
             
         end else if (temp_add_i_res[n][DATA_WIDTH + TWID_WIDTH + 2] == 1) begin
             if (temp_add_i_res[n][LSB_CUTOFF - 1] == 1 && (|temp_add_i_res[n][LSB_CUTOFF - 2:0] == 1)) begin
-                 temp_cut_tail_i[n] =  temp_add_i_res[n][DATA_WIDTH + TWID_WIDTH + 2 : LSB_CUTOFF] + 'b1;
+                 temp_cut_tail_i_reg[n] =  temp_add_i_res[n][DATA_WIDTH + TWID_WIDTH + 2 : LSB_CUTOFF] + 'b1;
             end else begin
-                 temp_cut_tail_i[n] =  temp_add_i_res[n][DATA_WIDTH + TWID_WIDTH + 2 : LSB_CUTOFF];
+                 temp_cut_tail_i_reg[n] =  temp_add_i_res[n][DATA_WIDTH + TWID_WIDTH + 2 : LSB_CUTOFF];
             end
         end
     end 
 end
-  
+
+//Register once between clamp and rounding
+logic signed [DATA_WIDTH + TWID_WIDTH + 2 - LSB_CUTOFF : 0] temp_cut_tail_r[3:0];
+logic signed [DATA_WIDTH + TWID_WIDTH + 2 - LSB_CUTOFF : 0] temp_cut_tail_i[3:0];
+
+always_ff @( posedge clk,negedge rst_n ) begin
+    if (!rst_n) begin
+        for (int n = 0;n < 4 ;n++ ) begin
+            temp_cut_tail_r[n] <= 'b0;
+            temp_cut_tail_i[n] <= 'b0;
+        end
+    end else begin
+        for (int n = 0;n < 4 ;n++ ) begin
+            temp_cut_tail_r[n] <= temp_cut_tail_r_reg[n];
+            temp_cut_tail_i[n] <= temp_cut_tail_i_reg[n];
+        end
+    end
+end
+
+
 //clamp
 always_comb begin : CUT_head_r
     for (int n = 0;n < 4 ;n++ ) begin
@@ -365,7 +384,7 @@ logic [10:0] index_1;
 logic [10:0] index_2;
 logic [10:0] index_3;
 logic [10:0] index_4;
-// logic [10:0] index_5;
+logic [10:0] index_5;
 always_ff @( posedge clk,negedge rst_n ) begin
     if (!rst_n) begin
         index <= 'b0;
@@ -374,11 +393,11 @@ always_ff @( posedge clk,negedge rst_n ) begin
         index_2 <= 'b0;
         index_3 <= 'b0;
         index_4 <= 'b0;
-        // index_5 <= 'b0;
+        index_5 <= 'b0;
     end else if ((ready == 0) && (valid == 0)) begin
         index <= 'b0;
     end else begin
-        {index,index_0,index_1,index_2,index_3,index_4} <= {index_0,index_1,index_2,index_3,index_4,lable};
+        {index,index_0,index_1,index_2,index_3,index_4,index_5} <= {index_0,index_1,index_2,index_3,index_4,index_5,lable};
     end
 end
 
@@ -392,7 +411,7 @@ logic valid1;
 logic valid2;
 logic valid3;
 logic valid4;
-// logic valid5;
+logic valid5;
 
 always_ff @( posedge clk , negedge rst_n ) begin 
     if (!rst_n) begin
@@ -402,10 +421,10 @@ always_ff @( posedge clk , negedge rst_n ) begin
         valid2 <= 'b0;
         valid3 <= 'b0;
         valid4 <= 'b0;
-        // valid5 <= 'b0;
+        valid5 <= 'b0;
 
     end else begin
-        {ready,valid0,valid1,valid2,valid3,valid4} <= {valid0,valid1,valid2,valid3,valid4,valid};
+        {ready,valid0,valid1,valid2,valid3,valid4,valid5} <= {valid0,valid1,valid2,valid3,valid4,valid5,valid};
     end
 end
 endmodule
