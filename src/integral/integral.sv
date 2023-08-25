@@ -112,7 +112,14 @@ logic [IN_DATA_WIDTH * 2 - LSB_CUTOFF : 0] temp_cut_tail_col2[3:0];
         for (int n = 0;n < 4 ;n++ ) begin
             if (add_square_col1[n][IN_DATA_WIDTH * 2] == 0) begin
                 if (add_square_col1[n][LSB_CUTOFF - 1] == 1) begin
-                    temp_cut_tail_col1[n] =  add_square_col1[n][IN_DATA_WIDTH * 2 : LSB_CUTOFF] + 'b1;
+
+                    if (&add_square_col1[n][IN_DATA_WIDTH * 2 - 1 : LSB_CUTOFF]) begin
+                        temp_cut_tail_col1[n] = {1'b0,{(IN_DATA_WIDTH * 2 - LSB_CUTOFF){1'b0}}};
+                    end else begin
+                        temp_cut_tail_col1[n] =  add_square_col1[n][IN_DATA_WIDTH * 2 : LSB_CUTOFF] + 'b1;   
+                    end
+
+                    //temp_cut_tail_col1[n] =  add_square_col1[n][IN_DATA_WIDTH * 2 : LSB_CUTOFF] + 'b1;
                 end else begin
                     temp_cut_tail_col1[n] =  add_square_col1[n][IN_DATA_WIDTH * 2 : LSB_CUTOFF];
                 end
@@ -131,7 +138,14 @@ logic [IN_DATA_WIDTH * 2 - LSB_CUTOFF : 0] temp_cut_tail_col2[3:0];
         for (int n = 0;n < 4 ;n++ ) begin
             if (add_square_col2[n][IN_DATA_WIDTH * 2] == 0) begin
                 if (add_square_col2[n][LSB_CUTOFF - 1] == 1) begin
-                    temp_cut_tail_col2[n] = add_square_col2[n][IN_DATA_WIDTH * 2 : LSB_CUTOFF] + 'b1;
+
+                    if (&add_square_col2[n][IN_DATA_WIDTH * 2 - 1 : LSB_CUTOFF]) begin
+                        temp_cut_tail_col2[n] = {1'b0,{(IN_DATA_WIDTH * 2 - LSB_CUTOFF){1'b0}}};
+                    end else begin
+                        temp_cut_tail_col2[n] = add_square_col2[n][IN_DATA_WIDTH * 2 : LSB_CUTOFF] + 'b1;   
+                    end
+                    
+                    //temp_cut_tail_col2[n] = add_square_col2[n][IN_DATA_WIDTH * 2 : LSB_CUTOFF] + 'b1;
                 end else begin
                     temp_cut_tail_col2[n] = add_square_col2[n][IN_DATA_WIDTH * 2 : LSB_CUTOFF];
                 end

@@ -238,7 +238,13 @@ always_comb begin : CUT_tail_r
     for (int n = 0;n < 4 ;n++ ) begin
         if (temp_add_r_res[n][DATA_WIDTH + TWID_WIDTH + 2] == 0) begin
             if (temp_add_r_res[n][LSB_CUTOFF - 1] == 1) begin
-                temp_cut_tail_r[n] =  temp_add_r_res[n][DATA_WIDTH + TWID_WIDTH + 2 : LSB_CUTOFF] + 'b1;
+
+                if (&temp_add_r_res[n][DATA_WIDTH + TWID_WIDTH + 1 : LSB_CUTOFF]) begin
+                    temp_cut_tail_r[n] = {1'b0,{(DATA_WIDTH + TWID_WIDTH + 2 - LSB_CUTOFF){1'b1}}};
+                end else begin
+                    temp_cut_tail_r[n] =  temp_add_r_res[n][DATA_WIDTH + TWID_WIDTH + 2 : LSB_CUTOFF] + 'b1;   
+                end
+
             end else begin
                 temp_cut_tail_r[n] =  temp_add_r_res[n][DATA_WIDTH + TWID_WIDTH + 2 : LSB_CUTOFF];
             end
@@ -257,7 +263,14 @@ always_comb begin : CUT_tail_i
     for (int n = 0;n < 4 ;n++ ) begin
         if (temp_add_i_res[n][DATA_WIDTH + TWID_WIDTH + 2] == 0) begin
             if (temp_add_i_res[n][LSB_CUTOFF - 1] == 1) begin
-                 temp_cut_tail_i[n] =  temp_add_i_res[n][DATA_WIDTH + TWID_WIDTH + 2 : LSB_CUTOFF] + 'b1;
+
+                if (&temp_add_i_res[n][DATA_WIDTH + TWID_WIDTH + 1 : LSB_CUTOFF]) begin
+                    temp_cut_tail_i[n] = {1'b0,{(DATA_WIDTH + TWID_WIDTH + 2 - LSB_CUTOFF){1'b1}}};
+                end else begin
+                    temp_cut_tail_i[n] =  temp_add_i_res[n][DATA_WIDTH + TWID_WIDTH + 2 : LSB_CUTOFF] + 'b1;   
+                end
+                
+                 //temp_cut_tail_i[n] =  temp_add_i_res[n][DATA_WIDTH + TWID_WIDTH + 2 : LSB_CUTOFF] + 'b1;
             end else begin
                  temp_cut_tail_i[n] =  temp_add_i_res[n][DATA_WIDTH + TWID_WIDTH + 2 : LSB_CUTOFF];
             end
